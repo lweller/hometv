@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="app_name">WellerNET HomeTV Controller</string>
+	<string name="editPlayList">Modifier la liste de lecture</string>
+	<string name="channel_administration">Gestion des chaînes</string>
+	<string name="renderer_administration">Gestion des écrans</string>
+	<string name="select">Sélectioner</string>
+	<string name="play">Play</string>
+	<string name="pause">Pause</string>
+	<string name="stop">Stop</string>
+	<string name="channelTitle">Chaîne %s</string>
+	<string name="empty">vide</string>
+	<string name="paused">en pause</string>
+	<string name="stopped">arrêté</string>
+	<string name="fromLastPosition">dernière position</string>
+	<string name="fromBeginOfLastItem">début du dernier élément</string>
+	<string name="fromBeginOfPlayList">début de la list de lecture</string>
+	<string name="askForRestartMode">Depuis où voulez-vous reprendre la lecture?</string>
+	<string name="unknown">inconnu</string>
+	<string name="duration">Durée: %1$d:%2$02d:%3$02d</string>
+
+</resources>

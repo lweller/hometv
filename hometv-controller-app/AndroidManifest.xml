@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="ch.wellernet.hometv.controller.app"
+	android:versionCode="1"
+	android:versionName="1.0.0" >
+
+	<uses-sdk
+		android:minSdkVersion="17"
+		android:targetSdkVersion="22" />
+
+	<uses-permission android:name="android.permission.INTERNET" />
+
+	<application
+		android:name=".ControllerApp"
+		android:allowBackup="true"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name"
+		android:theme="@style/AppBaseTheme" >
+		<activity
+			android:name=".ControllerOverviewActivity_"
+			android:label="@string/app_name" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".channels.ChannelAdministrationActivity_"
+			android:label="@string/channel_administration"
+			android:parentActivityName=".ControllerOverviewActivity_" >
+		</activity>
+		<activity
+			android:name=".playlist.EditPlayListActivity_"
+			android:label="@string/editPlayList"
+			android:parentActivityName=".channels.ChannelAdministrationActivity_" >
+		</activity>
+	</application>
+
+</manifest>
