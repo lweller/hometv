@@ -1,6 +1,11 @@
 package ch.wellernet.hometv.master.api.model;
 
 import static ch.wellernet.hometv.master.api.model.ChannelState.IDLE;
+
+import java.util.Date;
+
+import org.joda.time.Duration;
+
 import ch.wellernet.hometv.util.model.IdentifyableObject;
 
 public class Channel extends IdentifyableObject<Integer> {
@@ -8,8 +13,10 @@ public class Channel extends IdentifyableObject<Integer> {
     private static final long serialVersionUID = 1L;
 
     private PlayList playList;
-    private PlayListItem currentPlayListItem;
     private ChannelState state;
+    private PlayListItem currentPlayListItem;
+    private Duration currentPosition;
+    private Date lastSynchronisaionWithMediaPlayer;
 
     public Channel(int id) {
         super(id);
@@ -25,6 +32,14 @@ public class Channel extends IdentifyableObject<Integer> {
         return currentPlayListItem;
     }
 
+    public Duration getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public Date getLastSynchronisaionWithMediaPlayer() {
+        return lastSynchronisaionWithMediaPlayer;
+    }
+
     public PlayList getPlayList() {
         return playList;
     }
@@ -35,6 +50,14 @@ public class Channel extends IdentifyableObject<Integer> {
 
     public void setCurrentPlayListItem(PlayListItem currentPlayListItem) {
         this.currentPlayListItem = currentPlayListItem;
+    }
+
+    public void setCurrentPosition(Duration currentPosition) {
+        this.currentPosition = currentPosition;
+    }
+
+    public void setLastSynchronisaionWithMediaPlayer(Date lastSynchronisaionWithMediaPlayer) {
+        this.lastSynchronisaionWithMediaPlayer = lastSynchronisaionWithMediaPlayer;
     }
 
     public void setState(ChannelState state) {

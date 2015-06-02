@@ -33,4 +33,9 @@
 	<bean id="root" class="org.restlet.routing.Router" />
 
 	<bean class="ch.wellernet.hometv.util.restlet.ServerRessourceHandler" />
+
+	<bean class="ch.wellernet.vlclib.VlcManager">
+		<constructor-arg name="hostname" value="localhost" />
+		<constructor-arg name="port" value="4212" />
+	</bean>
 </beans>

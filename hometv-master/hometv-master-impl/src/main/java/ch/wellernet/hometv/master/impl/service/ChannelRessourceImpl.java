@@ -1,34 +1,32 @@
 package ch.wellernet.hometv.master.impl.service;
 
-import static ch.wellernet.hometv.master.api.model.ChannelRestartMode.FROM_BEGIN_OF_PLAY_LIST;
 import static ch.wellernet.hometv.master.api.model.ChannelState.PAUSED;
 import static ch.wellernet.hometv.master.api.model.ChannelState.PLAYING;
-import static ch.wellernet.hometv.master.api.model.ChannelState.STOPPED;
 import static java.lang.Integer.parseInt;
+import static java.lang.String.format;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.model.ChannelRestartMode;
-import ch.wellernet.hometv.master.api.model.PlayList;
 import ch.wellernet.hometv.master.api.service.ChannelRessource;
-import ch.wellernet.hometv.master.impl.dao.ChannelDao;
-import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
+import ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager;
 import ch.wellernet.hometv.util.restlet.Restlet;
 
 @Restlet(router = "root", uriTemplate = "/channels/{id}")
 public class ChannelRessourceImpl extends ServerResource implements ChannelRessource {
 
-    @Resource
-    private ChannelDao channelDao;
+    private static final Log LOG = LogFactory.getLog(ChannelRessourceImpl.class);
 
     @Resource
-    private PlayListItemDao playListItemDao;
+    private ChannelVlcManager channelVlcManager;
 
     private int id;
 
@@ -37,7 +35,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public Channel load() {
-        return channelDao.find(id);
+        return channelVlcManager.loadChannel(id);
     }
 
     /**
@@ -45,10 +43,14 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void pause() {
+        LOG.trace(format("Trying to pause channel %s", id));
         Channel channel = load();
         if (channel != null) {
             if (channel.getState() == PLAYING) {
+                LOG.debug(format("Pausing channel %d", id));
                 channel.setState(PAUSED);
+            } else {
+                LOG.debug(format("Channel %d already paused, so there's nothing to to", id));
             }
         }
     }
@@ -60,15 +62,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
     public void restart(ChannelRestartMode mode) {
         Channel channel = load();
         if (channel != null) {
-            if (channel.getState() == STOPPED) {
-                channel.setState(PLAYING);
-                switch (mode) {
-                case FROM_BEGIN_OF_PLAY_LIST:
-                    channel.setCurrentPlayListItem(channel.getPlayList().getItems().get(0));
-                    break;
-                default:
-                }
-            }
+            channelVlcManager.restart(channel, mode);
         }
     }
 
@@ -77,10 +71,14 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void resume() {
+        LOG.trace(format("Trying to resume channel %s", id));
         Channel channel = load();
         if (channel != null) {
             if (channel.getState() == PAUSED) {
+                LOG.debug(format("Continues playing channel %d after pause", id));
                 channel.setState(PLAYING);
+            } else {
+                LOG.debug(format("Channel %d is curretnly not paused, so there's nothing to do", id));
             }
         }
     }
@@ -90,17 +88,9 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void start(List<Integer> playListItemIds) {
-        stop();
         Channel channel = load();
         if (channel != null) {
-            PlayList playList = channel.getPlayList();
-            playList.clear();
-            for (int id : playListItemIds) {
-                playList.addItem(playListItemDao.find(id));
-            }
-            channel.setCurrentPlayListItem(playList.getItems().isEmpty() ? null : playList.getItems().get(0));
-            channel.setState(STOPPED);
-            restart(FROM_BEGIN_OF_PLAY_LIST);
+            channelVlcManager.start(channel, playListItemIds);
         }
     }
 
@@ -111,9 +101,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
     public void stop() {
         Channel channel = load();
         if (channel != null) {
-            if (channel.getState() == PLAYING || channel.getState() == PAUSED) {
-                channel.setState(STOPPED);
-            }
+            channelVlcManager.stop(channel);
         }
     }
 
@@ -129,5 +117,4 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
     void setId(int id) {
         this.id = id;
     }
-
 }

@@ -9,7 +9,7 @@ public class PlayListItem extends IdentifyableObject<Integer> {
     private static final long serialVersionUID = 1L;
 
     private String title;
-
+    private String localPath;
     private Duration duration;
 
     public PlayListItem(int id) {
@@ -24,12 +24,20 @@ public class PlayListItem extends IdentifyableObject<Integer> {
         return duration;
     }
 
+    public String getLocalPath() {
+        return localPath;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
     }
 
     public void setTitle(String title) {
