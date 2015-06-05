@@ -214,14 +214,26 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>4.0.0-rc2</version>
-				</plugin>
-				<plugin>
-					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-					<artifactId>android-maven-plugin</artifactId>
-					<version>3.9.0-rc.2</version>
+                    <groupId>com.simpligility.maven.plugins</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>4.2.1</version>
+                    <configuration>
+                        <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                        <resourceDirectory>res</resourceDirectory>
+                        <sdk>
+                            <platform>17</platform>
+                        </sdk>
+                        <deleteConflictingFiles>true</deleteConflictingFiles>
+                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                        <dex>
+                            <multiDex>true</multiDex>
+                            <minimalMainDex>true</minimalMainDex>
+                            <jvmArguments>
+                                <jvmArgument>-Xmx512m</jvmArgument>
+                            </jvmArguments>
+                        </dex>
+                    </configuration>
+                    <extensions>true</extensions>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -243,5 +255,11 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>com.simpligility.maven.plugins</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
 </project>
