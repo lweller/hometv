@@ -60,10 +60,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void restart(ChannelRestartMode mode) {
-        Channel channel = load();
-        if (channel != null) {
-            channelVlcManager.restart(channel, mode);
-        }
+        channelVlcManager.restart(id, mode);
     }
 
     /**
@@ -88,10 +85,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void start(List<Integer> playListItemIds) {
-        Channel channel = load();
-        if (channel != null) {
-            channelVlcManager.start(channel, playListItemIds);
-        }
+        channelVlcManager.start(id, playListItemIds);
     }
 
     /**
@@ -99,10 +93,7 @@ public class ChannelRessourceImpl extends ServerResource implements ChannelResso
      */
     @Override
     public void stop() {
-        Channel channel = load();
-        if (channel != null) {
-            channelVlcManager.stop(channel);
-        }
+        channelVlcManager.stop(id);
     }
 
     /**

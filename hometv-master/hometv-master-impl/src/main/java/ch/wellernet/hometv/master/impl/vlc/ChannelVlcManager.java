@@ -76,7 +76,7 @@ public class ChannelVlcManager {
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
                     .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                    "sout-keep")));
+                            "sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");
@@ -86,15 +86,18 @@ public class ChannelVlcManager {
     }
 
     /**
-     * @param id
-     * @return
+     * Loads the channel from data store.
+     *
+     * @param channelId
+     *            the ID of channel that should be loaded
+     * @return the coresponding channel if it exists, <code>null</code> otherwise
      */
-    public Channel loadChannel(int id) {
-        Channel channel = channelDao.find(id);
+    public Channel loadChannel(int channelId) {
+        Channel channel = channelDao.find(channelId);
         if (channel == null) {
-            LOG.debug(format("Channel ID  %d not found", id));
+            LOG.debug(format("Channel ID  %d not found", channelId));
         } else {
-            LOG.debug(format("Loaded channel ID  %d", id));
+            LOG.debug(format("Loaded channel ID  %d", channelId));
         }
         return channel;
     }
@@ -102,12 +105,17 @@ public class ChannelVlcManager {
     /**
      * Starts playing current item on media corresponding to channel on VLC media player if it's not already playing.
      *
-     * @param channel
-     *            the channel that should start playing
+     * @param channelId
+     *            the ID of channel that should start playing
      * @throws ChannelVlcException
      *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
-    public void play(Channel channel) throws ChannelVlcException {
+    public void play(int channelId) throws ChannelVlcException {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return;
+        }
         PlayListItem currentPlayListItem = channel.getCurrentPlayListItem();
         long currentPosition = channel.getCurrentPosition().getMillis();
         int index = channel.getPlayList().getItems().indexOf(currentPlayListItem) + 1; // input item list in VLC is 1 based
@@ -130,57 +138,51 @@ public class ChannelVlcManager {
     }
 
     /**
-     * @param channel
-     */
-    public void resetCurrentToBeginOfLastItem(Channel channel) {
-        stop(channel);
-        channel.setCurrentPosition(new Duration(0));
-        LOG.debug(format("Current item for for channel ID %d set to %s at start position", channel.getId(), channel.getCurrentPlayListItem()
-                .getTitle()));
-    }
-
-    /**
-     * @param channel
-     */
-    public void resetCurrentToBeginOfPlayList(Channel channel) {
-        stop(channel);
-        PlayListItem currentPlayListItem = channel.getPlayList().getItems().get(0);
-        channel.setCurrentPlayListItem(currentPlayListItem);
-        channel.setCurrentPosition(new Duration(0));
-        LOG.debug(format("Current item for for channel ID %d set to %s at start position", channel.getId(), currentPlayListItem.getTitle()));
-    }
-
-    /**
-     * @param channel
+     * @param channelId
      * @param mode
      */
-    public void restart(Channel channel, ChannelRestartMode mode) {
+    public void restart(int channelId, ChannelRestartMode mode) {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return;
+        }
         if (mode == FROM_BEGIN_OF_PLAY_LIST) {
             resetCurrentToBeginOfPlayList(channel);
         } else if (mode == FROM_BEGIN_OF_LAST_ITEM) {
             resetCurrentToBeginOfLastItem(channel);
         }
-        play(channel);
+        play(channelId);
     }
 
     /**
-     * @param channel
+     * @param channelId
      * @param playListItemIds
      */
-    public void start(Channel channel, List<Integer> playListItemIds) {
+    public void start(int channelId, List<Integer> playListItemIds) {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return;
+        }
         updateVlcInput(channel, playListItemIds);
-        play(channel);
+        play(channelId);
     }
 
     /**
      * Stops playing the media corresponding to channel on VLC media player if it's currently playing.
      *
-     * @param channel
-     *            the channel that should stopped
+     * @param channelId
+     *            the ID of channel that should stopped
      * @throws ChannelVlcException
      *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
-    public void stop(Channel channel) throws ChannelVlcException {
+    public void stop(int channelId) throws ChannelVlcException {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return;
+        }
         if (channel.getState() == STOPPED || channel.getState() == IDLE) {
             LOG.debug(format("Channel ID %d is already stopped", channel.getId()));
         } else {
@@ -196,6 +198,27 @@ public class ChannelVlcManager {
     }
 
     /**
+     * @param channel
+     */
+    void resetCurrentToBeginOfLastItem(Channel channel) {
+        stop(channel.getId());
+        channel.setCurrentPosition(new Duration(0));
+        LOG.debug(format("Current item for for channel ID %d set to %s at start position", channel.getId(), channel.getCurrentPlayListItem()
+                .getTitle()));
+    }
+
+    /**
+     * @param channel
+     */
+    void resetCurrentToBeginOfPlayList(Channel channel) {
+        stop(channel.getId());
+        PlayListItem currentPlayListItem = channel.getPlayList().getItems().get(0);
+        channel.setCurrentPlayListItem(currentPlayListItem);
+        channel.setCurrentPosition(new Duration(0));
+        LOG.debug(format("Current item for for channel ID %d set to %s at start position", channel.getId(), currentPlayListItem.getTitle()));
+    }
+
+    /**
      * Updates the input of the media corresponding to the channel with currently defined play list items. First of all if media is currently playing,
      * it will be stopped. Then the whole input queue will be cleared and updated with new input items.
      *
@@ -206,8 +229,8 @@ public class ChannelVlcManager {
      * @throws ChannelVlcException
      *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
-    public void updateVlcInput(Channel channel, List<Integer> playListItemIds) throws ChannelVlcException {
-        stop(channel);
+    void updateVlcInput(Channel channel, List<Integer> playListItemIds) throws ChannelVlcException {
+        stop(channel.getId());
 
         String mediaName = buildMediaName(channel);
         PlayList playList = channel.getPlayList();

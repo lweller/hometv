@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -60,6 +61,7 @@ public class ChannelVlcManagerTest {
     private static final int PLAY_LIST_ITEM_ID_3 = 103;
 
     private static final int CHANNEL_ID = 42;
+    private static final int INEXISTENT_CHANNEL_ID = 666;
 
     private static final String MEDIA_NAME = format("channel%d", CHANNEL_ID);
 
@@ -96,6 +98,8 @@ public class ChannelVlcManagerTest {
         playListItems = new PlayListItem[] { createPlayListItem(PLAY_LIST_ITEM_ID_1), createPlayListItem(PLAY_LIST_ITEM_ID_2),
                 createPlayListItem(PLAY_LIST_ITEM_ID_3) };
 
+        when(channelDao.find(CHANNEL_ID)).thenReturn(channel);
+        when(channelDao.find(INEXISTENT_CHANNEL_ID)).thenReturn(null);
         when(playListItemDao.find(Matchers.anyInt())).thenReturn(playListItems[0], subarray(playListItems, 1, playListItems.length));
     }
 
@@ -116,7 +120,7 @@ public class ChannelVlcManagerTest {
     }
 
     @Test
-    public void shouldDoNothingWhenCurrentItemNotInPlayList() throws VlcConnectionException {
+    public void shouldDoNothingWhenPlayingAndChannelDoesNotExist() throws VlcConnectionException {
         // given
         channel.setState(STOPPED);
         channel.getPlayList().addItem(playListItems[0]);
@@ -124,7 +128,7 @@ public class ChannelVlcManagerTest {
         channel.setCurrentPosition(new Duration(0));
 
         // when
-        channelVlcManager.play(channel);
+        channelVlcManager.play(INEXISTENT_CHANNEL_ID);
 
         // then
         assertThat(channel.getState(), is(STOPPED));
@@ -132,12 +136,42 @@ public class ChannelVlcManagerTest {
     }
 
     @Test
-    public void shouldDoNothingWhenStopingInIdleState() throws VlcConnectionException {
+    public void shouldDoNothingWhenPlayingAndCurrentItemNotInPlayList() throws VlcConnectionException {
         // given
-        channel.setState(IDLE);
+        channel.setState(STOPPED);
+        channel.getPlayList().addItem(playListItems[0]);
+        channel.setCurrentPlayListItem(playListItems[1]);
+        channel.setCurrentPosition(new Duration(0));
 
         // when
-        channelVlcManager.stop(channel);
+        channelVlcManager.play(CHANNEL_ID);
+
+        // then
+        assertThat(channel.getState(), is(STOPPED));
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNothingWhenRestartingAndChannelDoesNotExist() throws VlcConnectionException {
+        // given
+        channel.setState(STOPPED);
+        doNothing().when(channelVlcManager).play(anyInt());
+
+        // when
+        channelVlcManager.restart(INEXISTENT_CHANNEL_ID, FROM_LAST_POSITION);
+
+        // then
+        assertThat(channel.getState(), is(STOPPED));
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNothingWhenStopingAndChannelDoesNotExist() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+
+        // when
+        channelVlcManager.stop(INEXISTENT_CHANNEL_ID);
 
         // then
         verifyNoMoreInteractions(vlcManager);
@@ -149,16 +183,43 @@ public class ChannelVlcManagerTest {
         channel.setState(STOPPED);
 
         // when
-        channelVlcManager.stop(channel);
+        channelVlcManager.stop(CHANNEL_ID);
 
         // then
         verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
+    public void shouldDoNothingWhenStoppingInIdleState() throws VlcConnectionException {
+        // given
+        channel.setState(IDLE);
+
+        // when
+        channelVlcManager.stop(CHANNEL_ID);
+
+        // then
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNotingWhenStartingAndChannelDoesNotExist() throws VlcConnectionException {
+        // given
+        List<Integer> playListItemsIds = asList(new Integer[] { PLAY_LIST_ITEM_ID_1, PLAY_LIST_ITEM_ID_2 });
+        doNothing().when(channelVlcManager).updateVlcInput(any(Channel.class), anyListOf(Integer.class));
+        doNothing().when(channelVlcManager).play(anyInt());
+
+        // when
+        channelVlcManager.start(INEXISTENT_CHANNEL_ID, playListItemsIds);
+
+        // then
+        assertThat(channel.getState(), is(IDLE));
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
     public void shouldLoadingExistingChannel() {
         // given
-        when(channelDao.find(CHANNEL_ID)).thenReturn(channel);
+        // nothing special
 
         // when
         Channel channel = channelVlcManager.loadChannel(CHANNEL_ID);
@@ -177,7 +238,7 @@ public class ChannelVlcManagerTest {
         channel.setCurrentPosition(new Duration(42));
 
         // when
-        channelVlcManager.play(channel);
+        channelVlcManager.play(CHANNEL_ID);
 
         // then
         assertThat(channel.getState(), is(PLAYING));
@@ -198,7 +259,7 @@ public class ChannelVlcManagerTest {
         channel.setCurrentPosition(new Duration(0));
 
         // when
-        channelVlcManager.play(channel);
+        channelVlcManager.play(CHANNEL_ID);
 
         // then
         assertThat(channel.getState(), is(PLAYING));
@@ -216,7 +277,7 @@ public class ChannelVlcManagerTest {
         channel.setCurrentPlayListItem(playListItems[1]);
         channel.setCurrentPosition(CURRENT_POSITION);
 
-        doNothing().when(channelVlcManager).stop(any(Channel.class));
+        doNothing().when(channelVlcManager).stop(anyInt());
 
         // when
         channelVlcManager.resetCurrentToBeginOfLastItem(channel);
@@ -225,7 +286,7 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getCurrentPlayListItem(), is(playListItems[1]));
         assertThat(channel.getCurrentPosition(), is(new Duration(0)));
 
-        verify(channelVlcManager).stop(channel);
+        verify(channelVlcManager).stop(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
@@ -238,7 +299,7 @@ public class ChannelVlcManagerTest {
         channel.setCurrentPlayListItem(playListItems[1]);
         channel.setCurrentPosition(new Duration(384238));
 
-        doNothing().when(channelVlcManager).stop(any(Channel.class));
+        doNothing().when(channelVlcManager).stop(anyInt());
 
         // when
         channelVlcManager.resetCurrentToBeginOfPlayList(channel);
@@ -247,78 +308,81 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getCurrentPlayListItem(), is(playListItems[0]));
         assertThat(channel.getCurrentPosition(), is(new Duration(0)));
 
-        verify(channelVlcManager).stop(channel);
+        verify(channelVlcManager).stop(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
     public void shouldRestartAtLastPosition() throws VlcConnectionException {
         // given
-        doNothing().when(channelVlcManager).play(any(Channel.class));
+        channel.setState(STOPPED);
+        doNothing().when(channelVlcManager).play(anyInt());
 
         // when
-        channelVlcManager.restart(channel, FROM_LAST_POSITION);
+        channelVlcManager.restart(CHANNEL_ID, FROM_LAST_POSITION);
 
         // then
-        verify(channelVlcManager).play(channel);
+        verify(channelVlcManager).play(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
     public void shouldRestartFromBeginOfLastItem() throws VlcConnectionException {
         // given
+        channel.setState(STOPPED);
         doNothing().when(channelVlcManager).resetCurrentToBeginOfLastItem(any(Channel.class));
-        doNothing().when(channelVlcManager).play(any(Channel.class));
+        doNothing().when(channelVlcManager).play(anyInt());
 
         // when
-        channelVlcManager.restart(channel, FROM_BEGIN_OF_LAST_ITEM);
+        channelVlcManager.restart(CHANNEL_ID, FROM_BEGIN_OF_LAST_ITEM);
 
         // then
         verify(channelVlcManager).resetCurrentToBeginOfLastItem(channel);
-        verify(channelVlcManager).play(channel);
+        verify(channelVlcManager).play(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
     public void shouldRestartFromBeginOfPlayList() throws VlcConnectionException {
         // given
+        channel.setState(STOPPED);
         doNothing().when(channelVlcManager).resetCurrentToBeginOfPlayList(any(Channel.class));
-        doNothing().when(channelVlcManager).play(any(Channel.class));
+        doNothing().when(channelVlcManager).play(anyInt());
 
         // when
-        channelVlcManager.restart(channel, FROM_BEGIN_OF_PLAY_LIST);
+        channelVlcManager.restart(CHANNEL_ID, FROM_BEGIN_OF_PLAY_LIST);
 
         // then
         verify(channelVlcManager).resetCurrentToBeginOfPlayList(channel);
-        verify(channelVlcManager).play(channel);
+        verify(channelVlcManager).play(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
     public void shouldReturnNullWhenLoadingInexistentChannel() {
         // given
-        when(channelDao.find(CHANNEL_ID)).thenReturn(null);
+        // nothing special
 
         // when
-        Channel channel = channelVlcManager.loadChannel(CHANNEL_ID);
+        Channel channel = channelVlcManager.loadChannel(INEXISTENT_CHANNEL_ID);
 
         // then
         assertThat(channel, is(nullValue()));
     }
 
     @Test
-    public void shouldStartPlayinfAfterUpdatingPlayList() throws VlcConnectionException {
+    public void shouldStartPlayingAfterUpdatingPlayList() throws VlcConnectionException {
         // given
         List<Integer> playListItemsIds = asList(new Integer[] { PLAY_LIST_ITEM_ID_1, PLAY_LIST_ITEM_ID_2 });
         doNothing().when(channelVlcManager).updateVlcInput(any(Channel.class), anyListOf(Integer.class));
-        doNothing().when(channelVlcManager).play(any(Channel.class));
+        doNothing().when(channelVlcManager).play(anyInt());
 
         // when
-        channelVlcManager.start(channel, playListItemsIds);
+        channelVlcManager.start(CHANNEL_ID, playListItemsIds);
 
         // then
         verify(channelVlcManager).updateVlcInput(channel, playListItemsIds);
-        verify(channelVlcManager).play(channel);
+        verify(channelVlcManager).play(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
@@ -328,7 +392,7 @@ public class ChannelVlcManagerTest {
         channel.setState(PLAYING);
 
         // when
-        channelVlcManager.stop(channel);
+        channelVlcManager.stop(CHANNEL_ID);
 
         // then
         verify(vlcManager).stop(MEDIA_NAME);
@@ -383,7 +447,7 @@ public class ChannelVlcManagerTest {
         doThrow(VlcConnectionException.class).when(vlcManager).seek(anyString(), any(Duration.class));
 
         // when
-        channelVlcManager.play(channel);
+        channelVlcManager.play(CHANNEL_ID);
 
         // then
         // an exception should be thrown
@@ -396,7 +460,7 @@ public class ChannelVlcManagerTest {
         doThrow(VlcConnectionException.class).when(vlcManager).stop(anyString());
 
         // when
-        channelVlcManager.stop(channel);
+        channelVlcManager.stop(CHANNEL_ID);
 
         // then
         // an exception should be thrown
@@ -407,7 +471,7 @@ public class ChannelVlcManagerTest {
         // given
         channel.setState(ChannelState.STOPPED);
         channel.getPlayList().addItem(playListItems[1]);
-        doNothing().when(channelVlcManager).stop(any(Channel.class));
+        doNothing().when(channelVlcManager).stop(anyInt());
         doNothing().when(channelVlcManager).resetCurrentToBeginOfPlayList(any(Channel.class));
 
         // when
@@ -417,7 +481,7 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getPlayList().getItems(), is(asList(playListItems)));
 
         InOrder order = inOrder(vlcManager, channelVlcManager);
-        order.verify(channelVlcManager).stop(channel);
+        order.verify(channelVlcManager).stop(CHANNEL_ID);
         order.verify(vlcManager).clearInput(MEDIA_NAME);
         order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[0].getLocalPath()));
         order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[1].getLocalPath()));
@@ -431,7 +495,7 @@ public class ChannelVlcManagerTest {
         // given
         channel.setState(ChannelState.STOPPED);
         channel.getPlayList().addItem(playListItems[1]);
-        doNothing().when(channelVlcManager).stop(any(Channel.class));
+        doNothing().when(channelVlcManager).stop(anyInt());
 
         // when
         channelVlcManager.updateVlcInput(channel, Collections.<Integer> emptyList());
@@ -440,7 +504,7 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getPlayList().getItems(), is(Collections.<PlayListItem> emptyList()));
 
         InOrder order = inOrder(vlcManager, channelVlcManager);
-        order.verify(channelVlcManager).stop(channel);
+        order.verify(channelVlcManager).stop(CHANNEL_ID);
         order.verify(vlcManager).clearInput(MEDIA_NAME);
         verifyNoMoreInteractions(vlcManager);
     }
