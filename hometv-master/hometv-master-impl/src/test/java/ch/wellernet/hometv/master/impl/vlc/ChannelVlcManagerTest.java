@@ -4,6 +4,7 @@ import static ch.wellernet.hometv.master.api.model.ChannelRestartMode.FROM_BEGIN
 import static ch.wellernet.hometv.master.api.model.ChannelRestartMode.FROM_BEGIN_OF_PLAY_LIST;
 import static ch.wellernet.hometv.master.api.model.ChannelRestartMode.FROM_LAST_POSITION;
 import static ch.wellernet.hometv.master.api.model.ChannelState.IDLE;
+import static ch.wellernet.hometv.master.api.model.ChannelState.PAUSED;
 import static ch.wellernet.hometv.master.api.model.ChannelState.PLAYING;
 import static ch.wellernet.hometv.master.api.model.ChannelState.STOPPED;
 import static ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager.getNextChannelId;
@@ -22,6 +23,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -66,6 +68,10 @@ public class ChannelVlcManagerTest {
     private static final String MEDIA_NAME = format("channel%d", CHANNEL_ID);
 
     private static final Duration CURRENT_POSITION = new Duration(384238);
+
+    private static final String PAUSE_MEDIA_ITEM_PATH = "/path/to/pause.avi";
+
+    private static final VlcInput PAUSE_INPUT = new VlcInput(PAUSE_MEDIA_ITEM_PATH);
 
     private static final VlcOutput STANDARD_OUTPUT = new VlcOutput.Builder().module("gather").module("std").property("access", "http")
             .property("mux", "ps").property("dst", format(":8080/%s", MEDIA_NAME)).build();
@@ -117,6 +123,61 @@ public class ChannelVlcManagerTest {
         verify(channelDao).save(channel);
         verify(vlcManager).createMedia(new VlcMedia(format("channel%d", id), BROADCAST, true, STANDARD_OUTPUT, SOUT_KEEP_OPTION));
         verifyNoMoreInteractions(vlcManager, channelDao);
+    }
+
+    @Test
+    public void shouldDoNothingWhenPausingAndChannelDoesNotExist() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        channel.getPlayList().addItem(playListItems[0]);
+        channel.getPlayList().addItem(playListItems[1]);
+        channel.setCurrentPlayListItem(playListItems[1]);
+        channel.setCurrentPosition(new Duration(0));
+        channelVlcManager.setPauseMeidaItemPath(PAUSE_MEDIA_ITEM_PATH);
+
+        // when
+        channelVlcManager.pause(INEXISTENT_CHANNEL_ID);
+
+        // then
+        assertThat(channel.getState(), is(PLAYING));
+
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNothingWhenPausingInIdleState() throws VlcConnectionException {
+        // given
+        channel.setState(IDLE);
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNothingWhenPausingInPausededState() throws VlcConnectionException {
+        // given
+        channel.setState(PAUSED);
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        verifyNoMoreInteractions(vlcManager);
+    }
+
+    @Test
+    public void shouldDoNothingWhenPausingInStoppedState() throws VlcConnectionException {
+        // given
+        channel.setState(STOPPED);
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
@@ -226,6 +287,30 @@ public class ChannelVlcManagerTest {
 
         // then
         assertThat(channel, is(channel));
+    }
+
+    @Test
+    public void shouldPauseAndPlayPauseItem() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        channel.getPlayList().addItem(playListItems[0]);
+        channel.getPlayList().addItem(playListItems[1]);
+        channel.setCurrentPlayListItem(playListItems[1]);
+        channel.setCurrentPosition(new Duration(0));
+        channelVlcManager.setPauseMeidaItemPath(PAUSE_MEDIA_ITEM_PATH);
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        assertThat(channel.getState(), is(PAUSED));
+
+        InOrder order = inOrder(vlcManager);
+        order.verify(vlcManager).toggleLoopState(MEDIA_NAME);
+        order.verify(vlcManager).addInputItem(MEDIA_NAME, PAUSE_INPUT);
+        order.verify(vlcManager).play(MEDIA_NAME, 3);
+        order.verify(vlcManager, times(2)).removeInputItem(MEDIA_NAME, 1);
+        verifyNoMoreInteractions(vlcManager);
     }
 
     @Test
@@ -381,8 +466,10 @@ public class ChannelVlcManagerTest {
         channelVlcManager.start(CHANNEL_ID, playListItemsIds);
 
         // then
-        verify(channelVlcManager).updateVlcInput(channel, playListItemsIds);
-        verify(channelVlcManager).play(CHANNEL_ID);
+        InOrder order = inOrder(channelVlcManager);
+        order.verify(channelVlcManager).stop(CHANNEL_ID);
+        order.verify(channelVlcManager).updateVlcInput(channel, playListItemsIds);
+        order.verify(channelVlcManager).play(CHANNEL_ID);
         verifyNoMoreInteractions(vlcManager);
     }
 
@@ -413,6 +500,19 @@ public class ChannelVlcManagerTest {
     }
 
     @Test(expected = ChannelVlcException.class)
+    public void shouldThrowExceptionWhenVlcAddPauseItemFailsWhilePausing() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        doThrow(VlcConnectionException.class).when(vlcManager).addInputItem(anyString(), any(VlcInput.class));
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        // an exception should be thrown
+    }
+
+    @Test(expected = ChannelVlcException.class)
     public void shouldThrowExceptionWhenVlcClearInputFails() throws VlcConnectionException {
         // given
         channel.setState(PLAYING);
@@ -432,6 +532,35 @@ public class ChannelVlcManagerTest {
 
         // when
         channelVlcManager.createChannel();
+
+        // then
+        // an exception should be thrown
+    }
+
+    @Test(expected = ChannelVlcException.class)
+    public void shouldThrowExceptionWhenVlcPlayPauseItemFailsWhilePausing() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        doThrow(VlcConnectionException.class).when(vlcManager).play(anyString(), anyInt());
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        // an exception should be thrown
+    }
+
+    @Test(expected = ChannelVlcException.class)
+    public void shouldThrowExceptionWhenVlcRemovePauseItemFailsWhilePausing() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        channel.getPlayList().addItem(playListItems[0]);
+        channel.setCurrentPlayListItem(playListItems[0]);
+        channel.setCurrentPosition(new Duration(0));
+        doThrow(VlcConnectionException.class).when(vlcManager).removeInputItem(anyString(), anyInt());
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
 
         // then
         // an exception should be thrown
@@ -466,6 +595,19 @@ public class ChannelVlcManagerTest {
         // an exception should be thrown
     }
 
+    @Test(expected = ChannelVlcException.class)
+    public void shouldThrowExceptionWhenVlcToggleLoopFailsWhilePausing() throws VlcConnectionException {
+        // given
+        channel.setState(PLAYING);
+        doThrow(VlcConnectionException.class).when(vlcManager).toggleLoopState(anyString());
+
+        // when
+        channelVlcManager.pause(CHANNEL_ID);
+
+        // then
+        // an exception should be thrown
+    }
+
     @Test
     public void shouldUpdatePlayList() throws VlcConnectionException {
         // given
@@ -481,7 +623,6 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getPlayList().getItems(), is(asList(playListItems)));
 
         InOrder order = inOrder(vlcManager, channelVlcManager);
-        order.verify(channelVlcManager).stop(CHANNEL_ID);
         order.verify(vlcManager).clearInput(MEDIA_NAME);
         order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[0].getLocalPath()));
         order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[1].getLocalPath()));
@@ -504,7 +645,6 @@ public class ChannelVlcManagerTest {
         assertThat(channel.getPlayList().getItems(), is(Collections.<PlayListItem> emptyList()));
 
         InOrder order = inOrder(vlcManager, channelVlcManager);
-        order.verify(channelVlcManager).stop(CHANNEL_ID);
         order.verify(vlcManager).clearInput(MEDIA_NAME);
         verifyNoMoreInteractions(vlcManager);
     }

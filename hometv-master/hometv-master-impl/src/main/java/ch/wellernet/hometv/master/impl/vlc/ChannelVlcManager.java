@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.model.ChannelRestartMode;
+import ch.wellernet.hometv.master.api.model.ChannelState;
 import ch.wellernet.hometv.master.api.model.PlayList;
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.ChannelDao;
@@ -51,6 +52,9 @@ public class ChannelVlcManager {
     }
 
     @Resource
+    private String pauseMeidaItemPath;
+
+    @Resource
     private ChannelDao channelDao;
 
     @Resource
@@ -62,12 +66,9 @@ public class ChannelVlcManager {
     /**
      * Creates a new media for a channel on VLC media player and configures its output .
      *
-     * @throws ChannelVlcException
-     *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
-     */
-    /**
      * @returns the new channel
      * @throws ChannelVlcException
+     *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
     public Channel createChannel() throws ChannelVlcException {
         Channel channel = new Channel(NEXT_CHANNEL_ID++);
@@ -76,13 +77,17 @@ public class ChannelVlcManager {
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
                     .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                            "sout-keep")));
+                    "sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");
         }
         LOG.debug(format("Created channel ID  %d", channel.getId()));
         return channel;
+    }
+
+    public String getPauseMeidaItemPath() {
+        return pauseMeidaItemPath;
     }
 
     /**
@@ -100,6 +105,40 @@ public class ChannelVlcManager {
             LOG.debug(format("Loaded channel ID  %d", channelId));
         }
         return channel;
+    }
+
+    /**
+     * Stops playing the media corresponding to channel on VLC media player if it's currently playing.
+     *
+     * @param channelId
+     *            the ID of channel that should stopped
+     * @throws ChannelVlcException
+     *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
+     */
+    public void pause(int channelId) throws ChannelVlcException {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return;
+        }
+        if (channel.getState() != PLAYING) {
+            LOG.debug(format("Channel ID %d is currently not playing", channel.getId()));
+        } else {
+            try {
+                String mediaName = buildMediaName(channel);
+                vlcManager.toggleLoopState(mediaName);
+                vlcManager.addInputItem(mediaName, new VlcInput(pauseMeidaItemPath));
+                vlcManager.play(mediaName, channel.getPlayList().getItems().size() + 1); // input item list in VLC is 1 based
+                for (int i = 0; i < channel.getPlayList().getItems().size(); i++) {
+                    vlcManager.removeInputItem(mediaName, 1);
+                }
+            } catch (VlcConnectionException exception) {
+                LOG.warn("Caught exception", exception);
+                throw new ChannelVlcException(format("Failed to pause media fro channel %s.", channel.getId()));
+            }
+            channel.setState(ChannelState.PAUSED);
+            LOG.debug(format("Channel ID %d paused", channel.getId()));
+        }
     }
 
     /**
@@ -155,6 +194,10 @@ public class ChannelVlcManager {
         play(channelId);
     }
 
+    public void setPauseMeidaItemPath(String pauseMeidaItemPath) {
+        this.pauseMeidaItemPath = pauseMeidaItemPath;
+    }
+
     /**
      * @param channelId
      * @param playListItemIds
@@ -165,6 +208,7 @@ public class ChannelVlcManager {
             LOG.debug("Did nothing as channel does not exist");
             return;
         }
+        stop(channel.getId());
         updateVlcInput(channel, playListItemIds);
         play(channelId);
     }
@@ -230,8 +274,6 @@ public class ChannelVlcManager {
      *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
     void updateVlcInput(Channel channel, List<Integer> playListItemIds) throws ChannelVlcException {
-        stop(channel.getId());
-
         String mediaName = buildMediaName(channel);
         PlayList playList = channel.getPlayList();
         try {
