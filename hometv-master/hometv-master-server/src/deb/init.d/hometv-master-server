@@ -1,0 +1,30 @@
+#!/bin/bash
+# /etc/init.d/hometv-master-server
+
+### BEGIN INIT INFO
+# Provides:          hometv-master-server
+# Required-Start:    $syslog
+# Required-Stop:     $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: HomeTV Master
+# Description: 
+### END INIT INFO
+
+
+case "$1" in 
+    start)
+        echo "Starting HomeTV Master"
+        jscv -pidfile /var/run/hometv-master-server.pid -cwd /usr/share/hometv-master-server -server -cp lib/*.jar ch.wellernet.hometv.master.impl.Main 
+        ;;
+    stop)
+        echo "Stopping HomeTV Master"
+        jscv -pidfile /var/run/hometv-master-server.pid -stop
+        ;;
+    *)
+        echo "Usage: /etc/init.d/hometv-master-server start|stop"
+        exit 1
+        ;;
+esac
+
+exit 0

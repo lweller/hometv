@@ -12,5 +12,6 @@
 	<modules>
 		<module>hometv-master-api</module>
 		<module>hometv-master-impl</module>
+		<module>hometv-master-server</module>
 	</modules>
 </project>

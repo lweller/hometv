@@ -1,0 +1,8 @@
+Package: [[name]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Depends: jdk (>= 1.6), jsvc
+Architecture: all
+Description: [[description]]
+Maintainer: lucien@wellernet.ch
