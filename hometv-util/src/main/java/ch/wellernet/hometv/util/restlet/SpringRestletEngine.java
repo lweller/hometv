@@ -10,11 +10,21 @@ import org.restlet.Restlet;
 import org.restlet.Server;
 import org.restlet.engine.Engine;
 import org.restlet.engine.converter.ConverterHelper;
+import org.restlet.ext.slf4j.Slf4jLoggerFacade;
 
-public class SpringRestletComponent extends Component {
+public class SpringRestletEngine extends Component {
+
+    public SpringRestletEngine() {
+        Engine.getInstance().setLoggerFacade(new Slf4jLoggerFacade());
+    }
+
+    public void addServer(Server server) {
+        getServers().add(server);
+    }
 
     public void setConverterReplacements(Map<Class<? extends ConverterHelper>, ConverterHelper> replacements) {
-        List<ConverterHelper> converters = Engine.getInstance().getRegisteredConverters();
+        Engine engine = Engine.getInstance();
+        List<ConverterHelper> converters = engine.getRegisteredConverters();
         for (ConverterHelper converter : converters) {
             if (replacements.containsKey(converter.getClass())) {
                 converters.remove(converter);
@@ -25,10 +35,6 @@ public class SpringRestletComponent extends Component {
 
     public void setRoot(Restlet root) {
         getDefaultHost().attach(root);
-    }
-
-    public void setServer(Server server) {
-        getServers().add(server);
     }
 
     @Override

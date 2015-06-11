@@ -35,6 +35,11 @@
 				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
+				<groupId>ch.wellernet.hometv.master</groupId>
+				<artifactId>hometv-master-impl</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
 				<groupId>ch.wellernet.hometv</groupId>
 				<artifactId>hometv-util</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
@@ -55,6 +60,16 @@
 				<artifactId>android</artifactId>
 				<version>22</version>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-daemon</groupId>
+				<artifactId>commons-daemon</artifactId>
+				<version>1.0.12</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-logging</groupId>
@@ -86,6 +101,12 @@
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-jcl</artifactId>
+				<version>2.3</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
 				<version>2.3</version>
 				<scope>runtime</scope>
 			</dependency>
@@ -138,6 +159,12 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.restlet.jse</groupId>
+				<artifactId>org.restlet.ext.slf4j</artifactId>
+				<version>2.3.2</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.restlet.android</groupId>
 				<artifactId>org.restlet.ext.jackson</artifactId>
 				<version>2.3.2</version>
@@ -186,6 +213,16 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot</artifactId>
+				<version>1.2.4.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-autoconfigure</artifactId>
+				<version>1.2.4.RELEASE</version>
+			</dependency>
+			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.12</version>
@@ -214,26 +251,26 @@
 					</configuration>
 				</plugin>
 				<plugin>
-                    <groupId>com.simpligility.maven.plugins</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-                    <version>4.2.1</version>
-                    <configuration>
-                        <androidManifestFile>AndroidManifest.xml</androidManifestFile>
-                        <resourceDirectory>res</resourceDirectory>
-                        <sdk>
-                            <platform>17</platform>
-                        </sdk>
-                        <deleteConflictingFiles>true</deleteConflictingFiles>
-                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                        <dex>
-                            <multiDex>true</multiDex>
-                            <minimalMainDex>true</minimalMainDex>
-                            <jvmArguments>
-                                <jvmArgument>-Xmx512m</jvmArgument>
-                            </jvmArguments>
-                        </dex>
-                    </configuration>
-                    <extensions>true</extensions>
+					<groupId>com.simpligility.maven.plugins</groupId>
+					<artifactId>android-maven-plugin</artifactId>
+					<version>4.2.1</version>
+					<configuration>
+						<androidManifestFile>AndroidManifest.xml</androidManifestFile>
+						<resourceDirectory>res</resourceDirectory>
+						<sdk>
+							<platform>17</platform>
+						</sdk>
+						<deleteConflictingFiles>true</deleteConflictingFiles>
+						<undeployBeforeDeploy>true</undeployBeforeDeploy>
+						<dex>
+							<multiDex>true</multiDex>
+							<minimalMainDex>true</minimalMainDex>
+							<jvmArguments>
+								<jvmArgument>-Xmx512m</jvmArgument>
+							</jvmArguments>
+						</dex>
+					</configuration>
+					<extensions>true</extensions>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>

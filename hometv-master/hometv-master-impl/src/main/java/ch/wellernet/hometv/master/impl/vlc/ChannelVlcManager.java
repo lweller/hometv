@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.Duration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import ch.wellernet.hometv.master.api.model.Channel;
@@ -51,7 +52,7 @@ public class ChannelVlcManager {
         return NEXT_CHANNEL_ID;
     }
 
-    @Resource
+    @Autowired(required = false)
     private String pauseMeidaItemPath;
 
     @Resource
@@ -77,7 +78,7 @@ public class ChannelVlcManager {
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
                     .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                    "sout-keep")));
+                            "sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");

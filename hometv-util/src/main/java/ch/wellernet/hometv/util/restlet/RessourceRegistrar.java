@@ -8,7 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class ServerRessourceHandler extends ServerResource implements ApplicationContextAware {
+public class RessourceRegistrar extends ServerResource implements ApplicationContextAware {
 
     private ApplicationContext context;
 

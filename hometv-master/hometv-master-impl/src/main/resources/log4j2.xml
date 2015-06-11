@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn">
 	<Appenders>
-		<Console name="default" target="SYSTEM_OUT">
+		<File name="default" fileName="hometv-master.log">
 			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-		</Console>
+		</File>
 	</Appenders>
 	<Loggers>
-		<Root level="info">
+		<Root level="warn">
 			<AppenderRef ref="default" />
 		</Root>
-		<Logger name="ch.wellernet" level="debug" />
+		<Logger name="ch.wellernet.hometv.master" level="info" />
 	</Loggers>
 </Configuration>
