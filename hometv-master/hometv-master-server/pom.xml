@@ -9,7 +9,7 @@
 	<groupId>ch.wellernet.hometv.master</groupId>
 	<artifactId>hometv-master-server</artifactId>
 	<packaging>deb</packaging>
-	<name>HomeTV Master Server</name>
+	<name>${artifactId}</name>
 	<description>Master server for HomeTV platform.</description>
 	<dependencies>
 		<dependency>

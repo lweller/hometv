@@ -32,7 +32,7 @@ public class StandardInitializer {
 
     private static final Log LOG = LogFactory.getLog(StandardInitializer.class);
 
-    private static final String VLC_EXEC_COMAND = "%s -I telnet --telnet-password=%s";
+    private static final String VLC_EXEC_COMAND = "%s -I telnet --telnet-port=%d --telnet-password=%s";
 
     @Resource
     private VlcManager vlcManager;
@@ -50,7 +50,8 @@ public class StandardInitializer {
         LOG.info("Initializing default setup");
 
         if (properties.isStartVlc()) {
-            vlcProcess = getRuntime().exec(format(VLC_EXEC_COMAND, properties.getVlcExecutable(), new String(properties.getPassword())));
+            vlcProcess = getRuntime().exec(
+                    format(VLC_EXEC_COMAND, properties.getVlcExecutable(), properties.getPort(), new String(properties.getPassword())));
             LOG.info("VLC media player sucessfully started");
         }
 

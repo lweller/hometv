@@ -2,7 +2,7 @@ Package: [[name]]
 Version: [[version]]
 Section: misc
 Priority: optional
-Depends: jdk (>= 1.6), jsvc
+Depends: oracle-java8-jdk, jsvc, mediainfo, vlc 
 Architecture: all
 Description: [[description]]
 Maintainer: lucien@wellernet.ch

@@ -11,15 +11,23 @@
 # Description: 
 ### END INIT INFO
 
+export JAVA_HOME=/usr/lib/jvm/jdk-8-oracle-arm-vfp-hflt
+
+BASE_DIR=/usr/share/hometv-master-server
+PID_FILE=/var/run/hometv-master-server.pid
+CLASSPATH="lib/*"
+MAIN_CLASS=ch.wellernet.hometv.master.impl.Main
 
 case "$1" in 
     start)
         echo "Starting HomeTV Master"
-        jscv -pidfile /var/run/hometv-master-server.pid -cwd /usr/share/hometv-master-server -server -cp lib/*.jar ch.wellernet.hometv.master.impl.Main 
+        cd $BASE_DIR
+        jsvc -home $JAVA_HOME -pidfile $PID_FILE -server -cp "$CLASSPATH" $MAIN_CLASS
         ;;
     stop)
         echo "Stopping HomeTV Master"
-        jscv -pidfile /var/run/hometv-master-server.pid -stop
+        cd $BASE_DIR
+        jsvc -stop -home $JAVA_HOME -pidfile $PID_FILE -server -cp "$CLASSPATH" $MAIN_CLASS
         ;;
     *)
         echo "Usage: /etc/init.d/hometv-master-server start|stop"
