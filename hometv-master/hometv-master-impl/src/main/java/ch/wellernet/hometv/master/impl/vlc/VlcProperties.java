@@ -37,7 +37,7 @@ public class VlcProperties {
     /**
      * <code>vlc.hostname</code> : path to command line executable of VLC media player, defaults to <code>/usr/bin/cvlc</code>
      */
-    private String vlcExecutable = "/usr/bin/cvlc";
+    private String vlcExecutable = "/usr/bin/vlc-wrapper";
 
     public String getHostname() {
         return hostname;

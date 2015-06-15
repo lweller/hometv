@@ -1,1 +1,3 @@
 #!/bin/sh
+/etc/init.d/hometv-master-server stop
+update-rc.d hometv-master-server remove

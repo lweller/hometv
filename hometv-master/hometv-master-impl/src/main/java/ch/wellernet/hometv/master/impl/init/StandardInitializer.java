@@ -3,10 +3,14 @@
  */
 package ch.wellernet.hometv.master.impl.init;
 
+import static java.lang.Math.pow;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.String.format;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -50,9 +54,15 @@ public class StandardInitializer {
         LOG.info("Initializing default setup");
 
         if (properties.isStartVlc()) {
-            vlcProcess = getRuntime().exec(
-                    format(VLC_EXEC_COMAND, properties.getVlcExecutable(), properties.getPort(), new String(properties.getPassword())));
-            LOG.info("VLC media player sucessfully started");
+            String command = format(VLC_EXEC_COMAND, properties.getVlcExecutable(), properties.getPort(), new String(properties.getPassword()));
+            LOG.debug(format("executing command: %s", command));
+            vlcProcess = getRuntime().exec(command);
+            if (vlcUpAndRunning()) {
+                LOG.info("VLC media player sucessfully started");
+            } else {
+                LOG.info("Aborting setup");
+                return;
+            }
         }
 
         vlcManager.connect(properties.getPassword());
@@ -70,5 +80,33 @@ public class StandardInitializer {
             vlcProcess.destroy();
             LOG.info("VLC media player successfully stopped");
         }
+    }
+
+    private synchronized boolean vlcUpAndRunning() {
+        Socket socket = null;
+        try {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    socket = new Socket();
+                    socket.connect(new InetSocketAddress("localhost", vlcManager.getPort()));
+                    return true;
+                } catch (ConnectException exception) {
+                    long delay = (long) (1000 * pow(2, i));
+                    LOG.debug(format("VLC media player actually not runnning, retrying in %d seconds", delay / 1000));
+                    wait(delay);
+                } finally {
+                    if (socket != null && !socket.isClosed()) {
+                        socket.close();
+                    }
+                    socket = null;
+                }
+            }
+            LOG.warn("VLC media player seems not up and runnning");
+            return false;
+        } catch (IOException | InterruptedException exception) {
+            LOG.warn("Cauth exeception", exception);
+            return false;
+        }
+
     }
 }

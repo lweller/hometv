@@ -1,1 +1,3 @@
 #!/bin/sh
+update-rc.d hometv-master-server defaults
+/etc/init.d/hometv-master-server start
