@@ -13,6 +13,11 @@ public class WrapperGenericDao<ID, T extends IdentifyableObject<ID>> implements 
     }
 
     @Override
+    public void attach(T object) {
+        targetDao.attach(object);
+    }
+
+    @Override
     public void delete(ID id) {
         targetDao.delete(id);
     }
@@ -26,10 +31,4 @@ public class WrapperGenericDao<ID, T extends IdentifyableObject<ID>> implements 
     public List<T> findAll() {
         return targetDao.findAll();
     }
-
-    @Override
-    public T save(T object) {
-        return targetDao.save(object);
-    }
-
 }

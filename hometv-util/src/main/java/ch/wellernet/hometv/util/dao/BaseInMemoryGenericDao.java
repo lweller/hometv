@@ -20,6 +20,12 @@ public class BaseInMemoryGenericDao<ID, T extends IdentifyableObject<ID>> implem
     }
 
     @Override
+    public void attach(T object) {
+        initId(object);
+        objects.put(object.getId(), object);
+    }
+
+    @Override
     public void delete(ID id) {
         objects.remove(id);
     }
@@ -32,13 +38,6 @@ public class BaseInMemoryGenericDao<ID, T extends IdentifyableObject<ID>> implem
     @Override
     public List<T> findAll() {
         return unmodifiableList(new ArrayList<T>(objects.values()));
-    }
-
-    @Override
-    public T save(T object) {
-        initId(object);
-        objects.put(object.getId(), object);
-        return object;
     }
 
     private void initId(T object) {

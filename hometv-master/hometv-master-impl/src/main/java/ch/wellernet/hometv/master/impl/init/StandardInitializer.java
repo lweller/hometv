@@ -54,7 +54,7 @@ public class StandardInitializer {
         LOG.info("Initializing default setup");
 
         if (properties.isStartVlc()) {
-            String command = format(VLC_EXEC_COMAND, properties.getVlcExecutable(), properties.getPort(), new String(properties.getPassword()));
+            String command = format(VLC_EXEC_COMAND, properties.getExecutable(), properties.getPort(), new String(properties.getPassword()));
             LOG.debug(format("executing command: %s", command));
             vlcProcess = getRuntime().exec(command);
             if (vlcUpAndRunning()) {

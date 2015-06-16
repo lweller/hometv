@@ -73,12 +73,12 @@ public class ChannelVlcManager {
      */
     public Channel createChannel() throws ChannelVlcException {
         Channel channel = new Channel(NEXT_CHANNEL_ID++);
-        channelDao.save(channel);
+        channelDao.attach(channel);
         String mediaName = buildMediaName(channel);
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
                     .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                            "sout-keep")));
+                    "sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");
@@ -292,7 +292,7 @@ public class ChannelVlcManager {
             for (int id : playListItemIds) {
                 PlayListItem item = playListItemDao.find(id);
                 try {
-                    vlcManager.addInputItem(mediaName, new VlcInput(item.getLocalPath()));
+                    vlcManager.addInputItem(mediaName, new VlcInput(item.getFile().getAbsolutePath()));
                 } catch (VlcConnectionException exception) {
                     LOG.warn("Caught exception", exception);
                     throw new ChannelVlcException(

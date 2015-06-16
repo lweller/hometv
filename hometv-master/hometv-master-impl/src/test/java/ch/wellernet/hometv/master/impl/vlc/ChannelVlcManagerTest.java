@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,9 +56,6 @@ import ch.wellernet.vlclib.VlcOutput;
 
 public class ChannelVlcManagerTest {
 
-    /**
-     *
-     */
     private static final int PLAY_LIST_ITEM_ID_1 = 101;
     private static final int PLAY_LIST_ITEM_ID_2 = 102;
     private static final int PLAY_LIST_ITEM_ID_3 = 103;
@@ -78,8 +76,8 @@ public class ChannelVlcManagerTest {
     private static final VlcOption SOUT_KEEP_OPTION = new VlcOption("sout-keep");
 
     // under test
-    @InjectMocks
     @Spy
+    @InjectMocks
     private ChannelVlcManager channelVlcManager;
 
     @Mock
@@ -120,7 +118,7 @@ public class ChannelVlcManagerTest {
         // then
         assertThat(channel, is(notNullValue()));
 
-        verify(channelDao).save(channel);
+        verify(channelDao).attach(channel);
         verify(vlcManager).createMedia(new VlcMedia(format("channel%d", id), BROADCAST, true, STANDARD_OUTPUT, SOUT_KEEP_OPTION));
         verifyNoMoreInteractions(vlcManager, channelDao);
     }
@@ -624,9 +622,9 @@ public class ChannelVlcManagerTest {
 
         InOrder order = inOrder(vlcManager, channelVlcManager);
         order.verify(vlcManager).clearInput(MEDIA_NAME);
-        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[0].getLocalPath()));
-        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[1].getLocalPath()));
-        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[2].getLocalPath()));
+        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[0].getFile().getAbsolutePath()));
+        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[1].getFile().getAbsolutePath()));
+        order.verify(vlcManager).addInputItem(MEDIA_NAME, new VlcInput(playListItems[2].getFile().getAbsolutePath()));
         order.verify(channelVlcManager).resetCurrentToBeginOfPlayList(channel);
         verifyNoMoreInteractions(vlcManager);
     }
@@ -651,7 +649,7 @@ public class ChannelVlcManagerTest {
 
     private PlayListItem createPlayListItem(int id) {
         PlayListItem playListItem = new PlayListItem(id);
-        playListItem.setLocalPath(format("/path/to/media/file%d.avi", id));
+        playListItem.setFile(new File(format("/path/to/media/file%d.avi", id)));
         return playListItem;
     }
 }

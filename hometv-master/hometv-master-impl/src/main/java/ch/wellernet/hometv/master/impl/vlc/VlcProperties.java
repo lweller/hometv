@@ -35,9 +35,13 @@ public class VlcProperties {
     private boolean startVlc = true;
 
     /**
-     * <code>vlc.hostname</code> : path to command line executable of VLC media player, defaults to <code>/usr/bin/cvlc</code>
+     * <code>vlc.excutable</code> : path to command line executable of VLC media player, defaults to <code>/usr/bin/vlc-wrapper</code>
      */
-    private String vlcExecutable = "/usr/bin/vlc-wrapper";
+    private String executable = "/usr/bin/vlc-wrapper";
+
+    public String getExecutable() {
+        return executable;
+    }
 
     public String getHostname() {
         return hostname;
@@ -51,12 +55,12 @@ public class VlcProperties {
         return port;
     }
 
-    public String getVlcExecutable() {
-        return vlcExecutable;
-    }
-
     public boolean isStartVlc() {
         return startVlc;
+    }
+
+    public void setExecutable(String executable) {
+        this.executable = executable;
     }
 
     public void setHostname(String hostname) {
@@ -75,7 +79,4 @@ public class VlcProperties {
         this.startVlc = startVlc;
     }
 
-    public void setVlcExecutable(String vlcExecutable) {
-        this.vlcExecutable = vlcExecutable;
-    }
 }

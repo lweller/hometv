@@ -1,5 +1,7 @@
 package ch.wellernet.hometv.master.api.model;
 
+import java.io.File;
+
 import org.joda.time.Duration;
 
 import ch.wellernet.hometv.util.model.IdentifyableObject;
@@ -9,7 +11,7 @@ public class PlayListItem extends IdentifyableObject<Integer> {
     private static final long serialVersionUID = 1L;
 
     private String title;
-    private String localPath;
+    private File file;
     private Duration duration;
 
     public PlayListItem(int id) {
@@ -24,8 +26,8 @@ public class PlayListItem extends IdentifyableObject<Integer> {
         return duration;
     }
 
-    public String getLocalPath() {
-        return localPath;
+    public File getFile() {
+        return file;
     }
 
     public String getTitle() {
@@ -36,8 +38,8 @@ public class PlayListItem extends IdentifyableObject<Integer> {
         this.duration = duration;
     }
 
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public void setTitle(String title) {
