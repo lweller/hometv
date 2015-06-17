@@ -17,6 +17,10 @@
 		</dependency>
 		<dependency>
 			<groupId>ch.wellernet.hometv</groupId>
+			<artifactId>hometv-test-util</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.hometv</groupId>
 			<artifactId>hometv-util</artifactId>
 		</dependency>
 		<dependency>

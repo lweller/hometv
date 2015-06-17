@@ -46,12 +46,6 @@ public class ChannelVlcManager {
 
     private static final Log LOG = LogFactory.getLog(ChannelVlcManager.class);
 
-    private static int NEXT_CHANNEL_ID = 1;
-
-    static int getNextChannelId() {
-        return NEXT_CHANNEL_ID;
-    }
-
     @Autowired(required = false)
     private String pauseMeidaItemPath;
 
@@ -72,8 +66,7 @@ public class ChannelVlcManager {
      *             when a unexpected problem with VLC media player occurs (see {@link ChannelVlcException})
      */
     public Channel createChannel() throws ChannelVlcException {
-        Channel channel = new Channel(NEXT_CHANNEL_ID++);
-        channelDao.attach(channel);
+        Channel channel = new Channel.Builder().build(channelDao);
         String mediaName = buildMediaName(channel);
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")

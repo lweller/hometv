@@ -50,7 +50,7 @@ public class DefaultDataInitializer implements DataInitializer {
             mediaItemManager.scanDirectory(properties.getMediaDirectory(), true);
 
             if (initializedSetting == null) {
-                initializedSetting = new Setting(1, INITIALIZED);
+                initializedSetting = new Setting(INITIALIZED);
                 settingDao.attach(initializedSetting);
             }
             initializedSetting.setValue(true);

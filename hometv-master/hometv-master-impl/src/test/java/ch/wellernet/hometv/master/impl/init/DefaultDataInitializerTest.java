@@ -52,7 +52,7 @@ public class DefaultDataInitializerTest {
     @Test
     public void shouldInitDataIfInitSettingIsPresentButFalse() {
         // given
-        Setting setting = new Setting(1, INITIALIZED);
+        Setting setting = new Setting(INITIALIZED);
         setting.setValue(false);
         doReturn(setting).when(settingDao).findByName(INITIALIZED);
 
@@ -96,7 +96,7 @@ public class DefaultDataInitializerTest {
     @Test
     public void shouldNotInitializeIdAlreadyInitialized() {
         // given
-        Setting setting = new Setting(1, INITIALIZED);
+        Setting setting = new Setting(INITIALIZED);
         setting.setValue(true);
         doReturn(setting).when(settingDao).findByName(INITIALIZED);
 

@@ -14,6 +14,7 @@
 		<module>hometv-controller-app</module>
 		<module>hometv-master</module>
 		<module>hometv-util</module>
+		<module>hometv-test-util</module>
 	</modules>
 	<repositories>
 		<repository>
@@ -43,6 +44,12 @@
 				<groupId>ch.wellernet.hometv</groupId>
 				<artifactId>hometv-util</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.hometv</groupId>
+				<artifactId>hometv-test-util</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>ch.wellernet.vlclib</groupId>

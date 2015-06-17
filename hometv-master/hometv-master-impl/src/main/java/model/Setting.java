@@ -19,9 +19,15 @@ public class Setting extends IdentifyableObject<Integer> {
 
     private String value;
 
-    public Setting(Integer id, String name) {
-        super(id);
+    public Setting(String name) {
         this.name = name;
+    }
+
+    /**
+     * Only used for internal purpose.
+     */
+    @SuppressWarnings("unused")
+    private Setting() {
     }
 
     public String getName() {

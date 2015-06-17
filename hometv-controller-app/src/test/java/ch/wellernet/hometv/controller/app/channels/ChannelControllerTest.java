@@ -34,6 +34,7 @@ import ch.wellernet.hometv.controller.app.channels.events.ChannelStartEvent;
 import ch.wellernet.hometv.controller.app.channels.events.ChannelStopEvent;
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.service.ChannelRessource;
+import ch.wellernet.hometv.test.model.PredefinedIdInitializer;
 import ch.wellernet.hometv.util.restlet.ClientRessourceFactory;
 
 import com.google.inject.AbstractModule;
@@ -161,7 +162,7 @@ public class ChannelControllerTest {
         // given
         ChannelRessource channelRessource = mock(ChannelRessource.class);
         when(channelRessourceFactory.getRessource(CHANNEL_ID)).thenReturn(channelRessource);
-        Channel channel = new Channel(CHANNEL_ID);
+        Channel channel = new Channel.Builder().build(new PredefinedIdInitializer<Channel>(CHANNEL_ID));
         when(channelRessource.load()).thenReturn(channel);
 
         // when

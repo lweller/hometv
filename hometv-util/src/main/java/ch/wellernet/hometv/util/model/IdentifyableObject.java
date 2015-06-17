@@ -5,14 +5,9 @@ import java.io.Serializable;
 public abstract class IdentifyableObject<ID> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final ID id;
+    private ID id;
 
-    public IdentifyableObject(ID id) {
-        this.id = id;
-    }
-
-    public ID getId() {
+    public final ID getId() {
         return id;
     }
-
 }

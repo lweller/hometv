@@ -26,8 +26,11 @@ import org.mockito.Spy;
 
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
+import ch.wellernet.hometv.test.model.PredefinedIdInitializer;
 
 public class MediaItemManagerTest {
+
+    private static final int PLAY_LIST_ITEM_ID = 1;
 
     private static final String OTHER_MEDIA_TITLE = "wrongtitle";
     private static final Duration OTHER_MEDIA_ITEM_DURATION = new Duration(66000l);
@@ -106,17 +109,15 @@ public class MediaItemManagerTest {
     public void shouldDeleteExisingPlayListItemWhenDurationCannotBeDetermined() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        PlayListItem playListItem = new PlayListItem(1);
-        playListItem.setFile(file);
-        playListItem.setTitle(OTHER_MEDIA_TITLE);
-        playListItem.setDuration(OTHER_MEDIA_ITEM_DURATION);
         doReturn(null).when(mediaItemManager).determineMediaDuration(file);
+        PlayListItem playListItem = new PlayListItem.Builder(OTHER_MEDIA_TITLE, file, OTHER_MEDIA_ITEM_DURATION)
+        .build(new PredefinedIdInitializer<PlayListItem>(PLAY_LIST_ITEM_ID));
 
         // when
         mediaItemManager.updateExistingPlayListItem(file, playListItem);
 
         // then
-        verify(playListItemDao).delete(1);
+        verify(playListItemDao).delete(PLAY_LIST_ITEM_ID);
     }
 
     @Test
@@ -200,11 +201,9 @@ public class MediaItemManagerTest {
     public void shouldUpdateExisingPlayListItem() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        PlayListItem playListItem = new PlayListItem(1);
-        playListItem.setFile(file);
-        playListItem.setTitle(OTHER_MEDIA_TITLE);
-        playListItem.setDuration(OTHER_MEDIA_ITEM_DURATION);
         doReturn(MEDIA_ITEM_DURATION).when(mediaItemManager).determineMediaDuration(file);
+        PlayListItem playListItem = new PlayListItem.Builder(OTHER_MEDIA_TITLE, file, OTHER_MEDIA_ITEM_DURATION)
+                .build(new PredefinedIdInitializer<PlayListItem>(PLAY_LIST_ITEM_ID));
 
         // when
         mediaItemManager.updateExistingPlayListItem(file, playListItem);
@@ -220,11 +219,11 @@ public class MediaItemManagerTest {
     public void shouldUpdteExistingPlayListItemForFile() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        PlayListItem playListItem = new PlayListItem(1);
-        playListItem.setFile(file);
-        doReturn(playListItem).when(playListItemDao).findByFile(file);
         File directory = buildDirectory(true, file);
         doNothing().when(mediaItemManager).updateExistingPlayListItem(any(File.class), any(PlayListItem.class));
+        PlayListItem playListItem = new PlayListItem.Builder(MEDIA_ITEM_TITLE, file, MEDIA_ITEM_DURATION)
+                .build(new PredefinedIdInitializer<PlayListItem>(PLAY_LIST_ITEM_ID));
+        doReturn(playListItem).when(playListItemDao).findByFile(file);
 
         // when
         mediaItemManager.scanDirectory(directory, true);

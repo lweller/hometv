@@ -5,21 +5,35 @@ import java.io.File;
 import org.joda.time.Duration;
 
 import ch.wellernet.hometv.util.model.IdentifyableObject;
+import ch.wellernet.hometv.util.model.ModelObjectBuilder;
 
 public class PlayListItem extends IdentifyableObject<Integer> {
+
+    public static class Builder extends ModelObjectBuilder<Integer, PlayListItem> {
+        private PlayListItem instance;
+
+        public Builder(String title, File file, Duration duration) {
+            instance = new PlayListItem();
+            instance.setTitle(title);
+            instance.setFile(file);
+            instance.setDuration(duration);
+        }
+
+        @Override
+        protected PlayListItem build() {
+            return instance;
+        }
+    }
 
     private static final long serialVersionUID = 1L;
 
     private String title;
+
     private File file;
     private Duration duration;
 
-    public PlayListItem(int id) {
-        super(id);
-    }
-
     private PlayListItem() {
-        super(null);
+
     }
 
     public Duration getDuration() {

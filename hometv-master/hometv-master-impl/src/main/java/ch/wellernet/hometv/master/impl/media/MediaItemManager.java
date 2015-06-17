@@ -35,8 +35,6 @@ public class MediaItemManager {
 
     private static final String MEDIA_FILE_EXTENSION = ".avi";
 
-    private int NEXT_PLAY_LIST_ITEM_ID = 1;
-
     @Resource
     private MediainfoProperties mediainfoProperties;
 
@@ -97,17 +95,12 @@ public class MediaItemManager {
     }
 
     void createNewPlayListItem(File file) {
-        PlayListItem playListItem;
         Duration duration = determineMediaDuration(file);
         if (duration == null) {
             LOG.debug(format("Ignored %s because its duration cannot be determined", file));
             return;
         }
-        playListItem = new PlayListItem(NEXT_PLAY_LIST_ITEM_ID++);
-        playListItem.setTitle(buildMediaItemTitle(file));
-        playListItem.setFile(file);
-        playListItem.setDuration(duration);
-        playListItemDao.attach(playListItem);
+        new PlayListItem.Builder(buildMediaItemTitle(file), file, duration).build(playListItemDao);
         LOG.debug(format("Successfully added %s", file));
     }
 
@@ -126,7 +119,7 @@ public class MediaItemManager {
             process = getRuntime().exec(
                     format("\"%s\" --Output=\"Video;%%Duration%%\" %s", mediainfoProperties.getExecutable(), file.getAbsolutePath()));
             return process.waitFor() == 0 ? new Duration(parseLong(new BufferedReader(new InputStreamReader(process.getInputStream())).readLine()))
-                    : null;
+            : null;
         } catch (InterruptedException | IOException exception) {
             LOG.warn("Caught exception", exception);
             return null;

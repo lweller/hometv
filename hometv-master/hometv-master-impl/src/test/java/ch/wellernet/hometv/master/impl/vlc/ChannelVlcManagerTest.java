@@ -7,7 +7,7 @@ import static ch.wellernet.hometv.master.api.model.ChannelState.IDLE;
 import static ch.wellernet.hometv.master.api.model.ChannelState.PAUSED;
 import static ch.wellernet.hometv.master.api.model.ChannelState.PLAYING;
 import static ch.wellernet.hometv.master.api.model.ChannelState.STOPPED;
-import static ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager.getNextChannelId;
+import static ch.wellernet.hometv.test.dao.DaoMockUtil.assignIdWhenAttached;
 import static ch.wellernet.vlclib.MediaType.BROADCAST;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -47,6 +47,7 @@ import ch.wellernet.hometv.master.api.model.ChannelState;
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.ChannelDao;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
+import ch.wellernet.hometv.test.model.PredefinedIdInitializer;
 import ch.wellernet.vlclib.VlcConnectionException;
 import ch.wellernet.vlclib.VlcInput;
 import ch.wellernet.vlclib.VlcManager;
@@ -97,7 +98,7 @@ public class ChannelVlcManagerTest {
         channelVlcManager = new ChannelVlcManager();
         initMocks(this);
 
-        channel = new Channel(CHANNEL_ID);
+        channel = new Channel.Builder().build(new PredefinedIdInitializer<Channel>(CHANNEL_ID));
 
         playListItems = new PlayListItem[] { createPlayListItem(PLAY_LIST_ITEM_ID_1), createPlayListItem(PLAY_LIST_ITEM_ID_2),
                 createPlayListItem(PLAY_LIST_ITEM_ID_3) };
@@ -110,7 +111,7 @@ public class ChannelVlcManagerTest {
     @Test
     public void shouldCreateNewChannel() throws VlcConnectionException {
         // given
-        int id = getNextChannelId();
+        assignIdWhenAttached(channelDao, CHANNEL_ID);
 
         // when
         Channel channel = channelVlcManager.createChannel();
@@ -119,7 +120,7 @@ public class ChannelVlcManagerTest {
         assertThat(channel, is(notNullValue()));
 
         verify(channelDao).attach(channel);
-        verify(vlcManager).createMedia(new VlcMedia(format("channel%d", id), BROADCAST, true, STANDARD_OUTPUT, SOUT_KEEP_OPTION));
+        verify(vlcManager).createMedia(new VlcMedia(format("channel%d", CHANNEL_ID), BROADCAST, true, STANDARD_OUTPUT, SOUT_KEEP_OPTION));
         verifyNoMoreInteractions(vlcManager, channelDao);
     }
 
@@ -648,8 +649,8 @@ public class ChannelVlcManagerTest {
     }
 
     private PlayListItem createPlayListItem(int id) {
-        PlayListItem playListItem = new PlayListItem(id);
-        playListItem.setFile(new File(format("/path/to/media/file%d.avi", id)));
+        PlayListItem playListItem = new PlayListItem.Builder(format("film%d", id), new File(format("/path/to/media/file%d.avi", id)), null)
+                .build(new PredefinedIdInitializer<PlayListItem>(id));
         return playListItem;
     }
 }
