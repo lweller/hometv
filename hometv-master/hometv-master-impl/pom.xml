@@ -15,6 +15,10 @@
 			<artifactId>hometv-master-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>ch.wellernet.mediainfolib</groupId>
+			<artifactId>mediainfolib</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>ch.wellernet.vlclib</groupId>
 			<artifactId>vlclib</artifactId>
 		</dependency>

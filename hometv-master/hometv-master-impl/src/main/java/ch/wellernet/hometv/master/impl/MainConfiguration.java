@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import ch.wellernet.hometv.master.impl.media.MediaConfiguration;
 import ch.wellernet.hometv.master.impl.service.ServiceConfiguration;
 import ch.wellernet.hometv.master.impl.vlc.VlcConfiguration;
 import ch.wellernet.hometv.util.restlet.CustomJacksonConverter;
@@ -35,7 +36,7 @@ import ch.wellernet.hometv.util.restlet.SpringRestletEngine;
 @Configuration
 @ComponentScan
 @EnableConfigurationProperties
-@Import({ VlcConfiguration.class, ServiceConfiguration.class })
+@Import({ MediaConfiguration.class, VlcConfiguration.class, ServiceConfiguration.class })
 public class MainConfiguration {
     @Resource
     private ServerProperties serverProperties;

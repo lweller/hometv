@@ -3,15 +3,10 @@
  */
 package ch.wellernet.hometv.master.impl.media;
 
-import static java.lang.Long.parseLong;
-import static java.lang.Runtime.getRuntime;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -24,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
+import ch.wellernet.mediainfo.Mediainfo;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
@@ -36,7 +32,7 @@ public class MediaItemManager {
     private static final String MEDIA_FILE_EXTENSION = ".avi";
 
     @Resource
-    private MediainfoProperties mediainfoProperties;
+    private Mediainfo mediainfo;
 
     @Resource
     private PlayListItemDao playListItemDao;
@@ -95,7 +91,7 @@ public class MediaItemManager {
     }
 
     void createNewPlayListItem(File file) {
-        Duration duration = determineMediaDuration(file);
+        Duration duration = mediainfo.determineVideoDuration(file);
         if (duration == null) {
             LOG.debug(format("Ignored %s because its duration cannot be determined", file));
             return;
@@ -104,30 +100,8 @@ public class MediaItemManager {
         LOG.debug(format("Successfully added %s", file));
     }
 
-    /**
-     * Reads the duration of media item.
-     *
-     * TODO: refactor to external lib
-     *
-     * @param file
-     *            the file of media item
-     * @return the duration of media item or <code>null</code> it duration cannot be determined
-     */
-    Duration determineMediaDuration(File file) {
-        Process process;
-        try {
-            process = getRuntime().exec(
-                    format("\"%s\" --Output=\"Video;%%Duration%%\" %s", mediainfoProperties.getExecutable(), file.getAbsolutePath()));
-            return process.waitFor() == 0 ? new Duration(parseLong(new BufferedReader(new InputStreamReader(process.getInputStream())).readLine()))
-            : null;
-        } catch (InterruptedException | IOException exception) {
-            LOG.warn("Caught exception", exception);
-            return null;
-        }
-    }
-
     void updateExistingPlayListItem(File file, PlayListItem playListItem) {
-        Duration duration = determineMediaDuration(file);
+        Duration duration = mediainfo.determineVideoDuration(file);
         if (duration == null) {
             playListItemDao.delete(playListItem.getId());
             LOG.debug(format("removed %s because its duration cannot be determined", file));

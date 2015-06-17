@@ -27,6 +27,7 @@ import org.mockito.Spy;
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
 import ch.wellernet.hometv.test.model.PredefinedIdInitializer;
+import ch.wellernet.mediainfo.Mediainfo;
 
 public class MediaItemManagerTest {
 
@@ -49,12 +50,15 @@ public class MediaItemManagerTest {
     @Mock
     private PlayListItemDao playListItemDao;
 
+    @Mock
+    private Mediainfo mediainfo;
+
     @Before
     public void setup() {
         mediaItemManager = new MediaItemManager();
         initMocks(this);
 
-        doReturn(MEDIA_ITEM_DURATION).when(mediaItemManager).determineMediaDuration(any(File.class));
+        doReturn(MEDIA_ITEM_DURATION).when(mediainfo).determineVideoDuration(any(File.class));
     }
 
     @Test
@@ -62,7 +66,7 @@ public class MediaItemManagerTest {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
         doNothing().when(playListItemDao).attach(any(PlayListItem.class));
-        doReturn(MEDIA_ITEM_DURATION).when(mediaItemManager).determineMediaDuration(file);
+        doReturn(MEDIA_ITEM_DURATION).when(mediainfo).determineVideoDuration(file);
 
         // when
         mediaItemManager.createNewPlayListItem(file);
@@ -109,7 +113,7 @@ public class MediaItemManagerTest {
     public void shouldDeleteExisingPlayListItemWhenDurationCannotBeDetermined() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        doReturn(null).when(mediaItemManager).determineMediaDuration(file);
+        doReturn(null).when(mediainfo).determineVideoDuration(file);
         PlayListItem playListItem = new PlayListItem.Builder(OTHER_MEDIA_TITLE, file, OTHER_MEDIA_ITEM_DURATION)
         .build(new PredefinedIdInitializer<PlayListItem>(PLAY_LIST_ITEM_ID));
 
@@ -188,7 +192,7 @@ public class MediaItemManagerTest {
     public void shouldNotCreateNewPlayListItemWhenDurationCannotBeDetermined() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        doReturn(null).when(mediaItemManager).determineMediaDuration(file);
+        doReturn(null).when(mediainfo).determineVideoDuration(file);
 
         // when
         mediaItemManager.createNewPlayListItem(file);
@@ -201,7 +205,7 @@ public class MediaItemManagerTest {
     public void shouldUpdateExisingPlayListItem() {
         // given
         File file = buildFile(true, MEDIA_ITEM_FILE_NAME);
-        doReturn(MEDIA_ITEM_DURATION).when(mediaItemManager).determineMediaDuration(file);
+        doReturn(MEDIA_ITEM_DURATION).when(mediainfo).determineVideoDuration(file);
         PlayListItem playListItem = new PlayListItem.Builder(OTHER_MEDIA_TITLE, file, OTHER_MEDIA_ITEM_DURATION)
                 .build(new PredefinedIdInitializer<PlayListItem>(PLAY_LIST_ITEM_ID));
 
