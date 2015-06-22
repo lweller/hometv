@@ -1,16 +1,21 @@
 package ch.wellernet.hometv.util.dao;
 
 import static java.util.Collections.unmodifiableList;
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ch.wellernet.hometv.util.model.IdentifyableObject;
 
 public class BaseInMemoryGenericDao<ID, T extends IdentifyableObject<ID>> implements GenericDao<ID, T> {
+    private static final Log LOG = LogFactory.getLog(BaseInMemoryGenericDao.class);
+
     private final Map<ID, T> objects;
     private final IdGenerator<ID, T> idGenerator;
 
@@ -43,17 +48,11 @@ public class BaseInMemoryGenericDao<ID, T extends IdentifyableObject<ID>> implem
     private void initId(T object) {
         if (idGenerator.requiresNewId(object)) {
             try {
-                Field field = IdentifyableObject.class.getDeclaredField("id");
-                field.setAccessible(true);
-                field.set(object, idGenerator.generateId());
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            } catch (SecurityException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                writeField(object, "id", idGenerator.generateId(), true);
+            } catch (IllegalAccessException exception) {
+                // should never happen as we force access
+                LOG.debug("Caught exception", exception);
+                throw new RuntimeException(exception);
             }
         }
     }

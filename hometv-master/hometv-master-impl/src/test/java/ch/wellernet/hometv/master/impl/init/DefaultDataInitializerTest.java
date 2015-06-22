@@ -2,7 +2,7 @@ package ch.wellernet.hometv.master.impl.init;
 
 import static ch.wellernet.hometv.master.impl.init.DefaultDataProperties.DEFAULT_MEDIA_DIRECTORY;
 import static ch.wellernet.hometv.master.impl.init.DefaultDataProperties.DEFUALT_CHANNEL_COUNT;
-import static model.Setting.INITIALIZED;
+import static ch.wellernet.hometv.master.impl.model.Setting.INITIALIZED;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,8 +10,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.io.File;
-
-import model.Setting;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +19,7 @@ import org.mockito.Spy;
 
 import ch.wellernet.hometv.master.impl.dao.SettingDao;
 import ch.wellernet.hometv.master.impl.media.MediaItemManager;
+import ch.wellernet.hometv.master.impl.model.Setting;
 import ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager;
 
 public class DefaultDataInitializerTest {

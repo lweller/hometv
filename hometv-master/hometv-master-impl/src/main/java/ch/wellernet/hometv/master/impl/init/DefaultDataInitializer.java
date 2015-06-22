@@ -3,16 +3,15 @@
  */
 package ch.wellernet.hometv.master.impl.init;
 
-import static model.Setting.INITIALIZED;
+import static ch.wellernet.hometv.master.impl.model.Setting.INITIALIZED;
 
 import javax.annotation.Resource;
-
-import model.Setting;
 
 import org.springframework.stereotype.Component;
 
 import ch.wellernet.hometv.master.impl.dao.SettingDao;
 import ch.wellernet.hometv.master.impl.media.MediaItemManager;
+import ch.wellernet.hometv.master.impl.model.Setting;
 import ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager;
 
 /**

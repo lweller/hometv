@@ -20,6 +20,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import ch.wellernet.hometv.master.impl.vlc.VlcProperties;
 import ch.wellernet.vlclib.VlcConnectionException;
@@ -39,6 +43,9 @@ public class StandardInitializer {
     private static final String VLC_EXEC_COMAND = "%s -I telnet --telnet-port=%d --telnet-password=%s";
 
     @Resource
+    private PlatformTransactionManager transactionManager;
+
+    @Resource
     private VlcManager vlcManager;
 
     @Resource
@@ -51,27 +58,43 @@ public class StandardInitializer {
 
     @PostConstruct
     public void setup() throws IOException, VlcConnectionException {
-        LOG.info("Initializing default setup");
+        new TransactionTemplate(transactionManager).execute(new TransactionCallbackWithoutResult() {
 
-        if (properties.isStartVlc()) {
-            String command = format(VLC_EXEC_COMAND, properties.getExecutable(), properties.getPort(), new String(properties.getPassword()));
-            LOG.debug(format("executing command: %s", command));
-            vlcProcess = getRuntime().exec(command);
-            if (vlcUpAndRunning()) {
-                LOG.info("VLC media player sucessfully started");
-            } else {
-                LOG.info("Aborting setup");
-                return;
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                LOG.info("Initializing default setup");
+
+                if (properties.isStartVlc()) {
+                    String command = format(VLC_EXEC_COMAND, properties.getExecutable(), properties.getPort(), new String(properties.getPassword()));
+                    LOG.debug(format("executing command: %s", command));
+                    try {
+                        vlcProcess = getRuntime().exec(command);
+                    } catch (IOException exception) {
+                        LOG.warn("Caught exception", exception);
+                        return;
+                    }
+                    if (vlcUpAndRunning()) {
+                        LOG.info("VLC media player sucessfully started");
+                    } else {
+                        LOG.info("Aborting setup");
+                        return;
+                    }
+                }
+
+                try {
+                    vlcManager.connect(properties.getPassword());
+                } catch (VlcConnectionException exception) {
+                    LOG.warn("Caught exception", exception);
+                    return;
+                }
+                LOG.info("Successfully connected to VLC mediaplayer");
+
+                if (dataInitializer != null) {
+                    dataInitializer.initData();
+                    LOG.info("Initialized data");
+                }
             }
-        }
-
-        vlcManager.connect(properties.getPassword());
-        LOG.info("Successfully connected to VLC mediaplayer");
-
-        if (dataInitializer != null) {
-            dataInitializer.initData();
-            LOG.info("Initialized data");
-        }
+        });
     }
 
     @PreDestroy

@@ -3,8 +3,7 @@
  */
 package ch.wellernet.hometv.test.model;
 
-import java.lang.reflect.Field;
-
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import ch.wellernet.hometv.util.model.IdentifyableObject;
 import ch.wellernet.hometv.util.model.ModelObjectRepository;
 
@@ -34,17 +33,10 @@ public class PredefinedIdInitializer<T extends IdentifyableObject<Integer>> impl
             throw new IllegalStateException("this initializer instance has already been used");
         }
         try {
-            Field field = IdentifyableObject.class.getDeclaredField("id");
-            field.setAccessible(true);
-            field.set(object, id);
+            writeField(object, "id", id, true);
             used = true;
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (SecurityException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            // should never happen as we force access
             throw new RuntimeException(e);
         }
     }

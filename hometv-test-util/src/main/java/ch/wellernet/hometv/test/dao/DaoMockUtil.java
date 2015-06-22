@@ -3,10 +3,9 @@
  */
 package ch.wellernet.hometv.test.dao;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
-
-import java.lang.reflect.Field;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -25,16 +24,9 @@ public class DaoMockUtil {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 try {
-                    Field field = IdentifyableObject.class.getDeclaredField("id");
-                    field.setAccessible(true);
-                    field.set(invocation.getArguments()[0], id);
-                } catch (NoSuchFieldException e) {
-                    throw new RuntimeException(e);
-                } catch (SecurityException e) {
-                    throw new RuntimeException(e);
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException(e);
+                    writeField(invocation.getArgumentAt(0, Object.class), "id", id, true);
                 } catch (IllegalAccessException e) {
+                    // should never happen as we force access
                     throw new RuntimeException(e);
                 }
                 return null;

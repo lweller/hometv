@@ -1,22 +1,33 @@
 /**
  *
  */
-package model;
+package ch.wellernet.hometv.master.impl.model;
 
 import static java.lang.String.valueOf;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import ch.wellernet.hometv.util.model.IdentifyableObject;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
  */
+@Entity
+@Table(schema = "HOMETV", name = "SETTING")
+@SequenceGenerator(name = "primary_key", schema = "HOMETV", sequenceName = "SEQ_SETTING")
 public class Setting extends IdentifyableObject<Integer> {
 
     private static final long serialVersionUID = 1L;
 
     public static final String INITIALIZED = "initialized";
 
+    @Column(name = "NAME")
     private String name;
 
+    @Column(name = "VALUE")
     private String value;
 
     public Setting(String name) {

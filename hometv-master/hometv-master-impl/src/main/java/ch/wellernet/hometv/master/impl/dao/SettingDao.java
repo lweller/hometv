@@ -3,7 +3,7 @@
  */
 package ch.wellernet.hometv.master.impl.dao;
 
-import model.Setting;
+import ch.wellernet.hometv.master.impl.model.Setting;
 import ch.wellernet.hometv.util.dao.GenericDao;
 
 /**

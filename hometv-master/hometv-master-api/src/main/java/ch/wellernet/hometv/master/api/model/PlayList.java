@@ -1,9 +1,15 @@
 package ch.wellernet.hometv.master.api.model;
 
 import static java.util.Collections.unmodifiableList;
+import static javax.persistence.CascadeType.DETACH;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
 
 import org.joda.time.Duration;
 
@@ -13,6 +19,9 @@ public class PlayList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @ManyToMany(cascade = DETACH)
+    @OrderColumn(name = "ORDER")
+    @JoinTable(schema = "HOMETV", name = "PLAY_LIST", joinColumns = @JoinColumn(name = "CHANNEL_ID"), inverseJoinColumns = @JoinColumn(name = "PLAY_LIST_ITEM_ID"))
     private List<PlayListItem> items;
 
     public PlayList() {
