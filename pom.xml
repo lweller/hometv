@@ -15,6 +15,7 @@
 		<module>hometv-master</module>
 		<module>hometv-util</module>
 		<module>hometv-test-util</module>
+		<module>hometv-renderer-app</module>
 	</modules>
 	<repositories>
 		<repository>
