@@ -1,5 +1,7 @@
 package ch.wellernet.hometv.util.restlet;
 
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+
 import javax.annotation.PostConstruct;
 
 import org.restlet.resource.ServerResource;
@@ -20,9 +22,11 @@ public class RessourceRegistrar extends ServerResource implements ApplicationCon
     @PostConstruct
     private void register() {
         for (String beanName : context.getBeanNamesForAnnotation(Restlet.class)) {
-            Restlet restlet = context.getType(beanName).getAnnotation(Restlet.class);
-            Router router = (Router) context.getBean(restlet.router());
-            router.attach(restlet.uriTemplate(), new SpringRestlet(context, beanName));
+            if (!beanName.startsWith("scopedTarget.")) {
+                Restlet restlet = findAnnotation(context.getType(beanName), Restlet.class);
+                Router router = (Router) context.getBean(restlet.router());
+                router.attach(restlet.uriTemplate(), new SpringRestlet(context, beanName));
+            }
         }
     }
 }

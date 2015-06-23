@@ -5,6 +5,7 @@ package ch.wellernet.hometv.master.impl.media;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.Duration;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
@@ -25,6 +27,7 @@ import ch.wellernet.mediainfo.Mediainfo;
  * @author Lucien Weller <lucien@wellernet.ch>
  */
 @Component
+@Transactional(propagation = REQUIRED)
 public class MediaItemManager {
 
     private static final Log LOG = LogFactory.getLog(MediaItemManager.class);

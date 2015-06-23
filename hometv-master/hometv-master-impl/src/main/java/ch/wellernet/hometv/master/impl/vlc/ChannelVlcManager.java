@@ -10,6 +10,7 @@ import static ch.wellernet.hometv.master.api.model.ChannelState.PLAYING;
 import static ch.wellernet.hometv.master.api.model.ChannelState.STOPPED;
 import static ch.wellernet.vlclib.MediaType.BROADCAST;
 import static java.lang.String.format;
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.model.ChannelRestartMode;
@@ -42,6 +44,7 @@ import ch.wellernet.vlclib.VlcOutput;
  * @since 1.0.0
  */
 @Component
+@Transactional(propagation = REQUIRED)
 public class ChannelVlcManager {
 
     private static final Log LOG = LogFactory.getLog(ChannelVlcManager.class);
@@ -71,7 +74,7 @@ public class ChannelVlcManager {
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
                     .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                    "sout-keep")));
+                            "sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");

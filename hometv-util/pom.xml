@@ -43,6 +43,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.restlet.jse</groupId>
 			<artifactId>org.restlet</artifactId>
 			<scope>provided</scope>

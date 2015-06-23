@@ -20,7 +20,7 @@ import ch.wellernet.hometv.master.api.service.ChannelRessource;
 import ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager;
 import ch.wellernet.hometv.util.restlet.Restlet;
 
-@Restlet(router = "root", uriTemplate = "/channels/{id}")
+@Restlet(router = "root", uriTemplate = "/channel/{id}")
 public class ChannelRessourceImpl extends ServerResource implements ChannelRessource {
 
     private static final Log LOG = LogFactory.getLog(ChannelRessourceImpl.class);

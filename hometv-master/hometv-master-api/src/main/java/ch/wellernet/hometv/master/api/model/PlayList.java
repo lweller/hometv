@@ -6,6 +6,7 @@ import static javax.persistence.CascadeType.DETACH;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -15,6 +16,7 @@ import org.joda.time.Duration;
 
 import ch.wellernet.hometv.util.model.Serializable;
 
+@Embeddable
 public class PlayList implements Serializable {
 
     private static final long serialVersionUID = 1L;
