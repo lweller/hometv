@@ -29,18 +29,15 @@ public class ControllerApp extends Application {
             Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
 
             Client client = new Client(HTTP);
-            ClientResource root = new ClientResource("http://10.0.2.2:8080/");
+            ClientResource root = new ClientResource("http://10.0.2.2:8100/");
             root.setNext(client);
             root.setEntityBuffering(true);
 
             binder.bind(ChannelController.class).toProvider(ChannelController.Provider.class);
             binder.bind(ChannelsRessource.class).toInstance(root.getChild("channels", ChannelsRessource.class));
-            binder.bind(PlayListItemsRessource.class).toInstance(
-                    root.getChild("playlistitems", PlayListItemsRessource.class));
+            binder.bind(PlayListItemsRessource.class).toInstance(root.getChild("playlistitems", PlayListItemsRessource.class));
             binder.bind(new TypeLiteral<ClientRessourceFactory<Integer, ChannelRessource>>() {
-            }).toInstance(
-                    new ClientRessourceFactory<Integer, ChannelRessource>(root.getChild("channels/"),
-                            ChannelRessource.class));
+            }).toInstance(new ClientRessourceFactory<Integer, ChannelRessource>(root.getChild("channel/"), ChannelRessource.class));
         }
     }
 
@@ -48,7 +45,6 @@ public class ControllerApp extends Application {
     public void onCreate() {
         super.onCreate();
         RoboGuice.setUseAnnotationDatabases(false);
-        RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
-                RoboGuice.newDefaultRoboModule(this), new Config());
+        RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE, RoboGuice.newDefaultRoboModule(this), new Config());
     }
 }

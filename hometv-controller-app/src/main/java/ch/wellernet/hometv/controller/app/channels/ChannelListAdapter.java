@@ -6,6 +6,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static roboguice.RoboGuice.getInjector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.androidannotations.annotations.AfterInject;
@@ -13,10 +14,12 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
+import roboguice.event.Observes;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import ch.wellernet.hometv.controller.app.channels.events.ChannelChangedEvent;
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.service.ChannelsRessource;
 
@@ -58,8 +61,7 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView,
-            ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChannelDetailView view = convertView == null ? build(context) : (ChannelDetailView) convertView;
         view.setChannel(getChild(groupPosition, childPosition));
         return view;
@@ -97,8 +99,18 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
+    public void onChannelChanged(@Observes ChannelChangedEvent event) {
+        for (int i = 0; i < channels.size(); i++) {
+            Channel oldChannel = channels.get(i);
+            Channel newChannel = event.getChannel();
+            if (newChannel != null && newChannel.getId() == oldChannel.getId()) {
+                channels.set(i, newChannel);
+            }
+        }
+    }
+
     public synchronized void setChannels(List<Channel> channels) {
-        this.channels = channels;
+        this.channels = new ArrayList<Channel>(channels);
         refresh();
     }
 
