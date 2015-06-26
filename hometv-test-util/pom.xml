@@ -10,8 +10,12 @@
 	<artifactId>hometv-test-util</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>ch.wellernet.hometv</groupId>
-			<artifactId>hometv-util</artifactId>
+			<groupId>ch.wellernet.hibernate</groupId>
+			<artifactId>hibernate-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.hibernate</groupId>
+			<artifactId>hibernate-dao</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

@@ -11,6 +11,18 @@
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
+			<groupId>ch.wellernet.hibernate</groupId>
+			<artifactId>hibernate-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.hibernate</groupId>
+			<artifactId>hibernate-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.restlet</groupId>
+			<artifactId>restlet-spring</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>ch.wellernet.hometv.master</groupId>
 			<artifactId>hometv-master-api</artifactId>
 		</dependency>

@@ -9,13 +9,14 @@ import javax.persistence.Table;
 
 import org.joda.time.Duration;
 
-import ch.wellernet.hometv.util.model.IdentifyableObject;
-import ch.wellernet.hometv.util.model.ModelObjectBuilder;
+import ch.wellernet.hibernate.model.IdentifyableObject;
+import ch.wellernet.hibernate.model.ModelObjectBuilder;
+import ch.wellernet.restlet.util.JsonObject;
 
 @Entity
 @Table(name = "PLAY_LIST_ITEM", schema = "HOMETV")
 @SequenceGenerator(name = "primary_key", schema = "HOMETV", sequenceName = "SEQ_PLAY_LIST_ITEM")
-public class PlayListItem extends IdentifyableObject<Integer> {
+public class PlayListItem extends IdentifyableObject<Integer> implements JsonObject {
 
     public static class Builder extends ModelObjectBuilder<Integer, PlayListItem> {
         private PlayListItem instance;

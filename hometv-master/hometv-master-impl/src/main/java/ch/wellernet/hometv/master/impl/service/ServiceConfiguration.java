@@ -9,9 +9,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 
-import ch.wellernet.hometv.util.restlet.RestletScopeResolver;
-import ch.wellernet.hometv.util.restlet.RessourceRegistrar;
-import ch.wellernet.hometv.util.restlet.Restlet;
+import ch.wellernet.restlet.spring.RessourceRegistrar;
+import ch.wellernet.restlet.spring.Restlet;
+import ch.wellernet.restlet.spring.RestletScopeResolver;
 
 /**
  * Spring configuration to restlet subcomponent.

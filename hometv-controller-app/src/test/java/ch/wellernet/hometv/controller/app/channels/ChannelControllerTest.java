@@ -35,7 +35,7 @@ import ch.wellernet.hometv.controller.app.channels.events.ChannelStopEvent;
 import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.service.ChannelRessource;
 import ch.wellernet.hometv.test.model.PredefinedIdInitializer;
-import ch.wellernet.hometv.util.restlet.ClientRessourceFactory;
+import ch.wellernet.restlet.util.ClientRessourceFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;

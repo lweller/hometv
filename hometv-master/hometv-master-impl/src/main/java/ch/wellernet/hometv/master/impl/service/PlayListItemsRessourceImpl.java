@@ -7,7 +7,7 @@ import org.restlet.resource.ServerResource;
 import ch.wellernet.hometv.master.api.model.PlayListItemList;
 import ch.wellernet.hometv.master.api.service.PlayListItemsRessource;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
-import ch.wellernet.hometv.util.restlet.Restlet;
+import ch.wellernet.restlet.spring.Restlet;
 
 @Restlet(router = "root", uriTemplate = "/playlistitems")
 public class PlayListItemsRessourceImpl extends ServerResource implements PlayListItemsRessource {

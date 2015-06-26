@@ -4,8 +4,8 @@
 package ch.wellernet.hometv.test.model;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
-import ch.wellernet.hometv.util.model.IdentifyableObject;
-import ch.wellernet.hometv.util.model.ModelObjectRepository;
+import ch.wellernet.hibernate.model.IdentifyableObject;
+import ch.wellernet.hibernate.model.ModelObjectRepository;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>

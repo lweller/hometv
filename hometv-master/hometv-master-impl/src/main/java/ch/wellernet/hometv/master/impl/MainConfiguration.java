@@ -3,7 +3,7 @@
  */
 package ch.wellernet.hometv.master.impl;
 
-import static ch.wellernet.hometv.util.restlet.TransactionalHttpServerHelper.TRANSACTION_MANAGER;
+import static ch.wellernet.restlet.spring.TransactionalHttpServerHelper.TRANSACTION_MANAGER;
 import static org.apache.commons.collections.MapUtils.putAll;
 import static org.restlet.data.Protocol.HTTP;
 
@@ -30,8 +30,8 @@ import ch.wellernet.hometv.master.impl.dao.hibernate.PersistenceConfiguration;
 import ch.wellernet.hometv.master.impl.media.MediaConfiguration;
 import ch.wellernet.hometv.master.impl.service.ServiceConfiguration;
 import ch.wellernet.hometv.master.impl.vlc.VlcConfiguration;
-import ch.wellernet.hometv.util.restlet.CustomJacksonConverter;
-import ch.wellernet.hometv.util.restlet.SpringRestletEngine;
+import ch.wellernet.restlet.spring.SpringRestletEngine;
+import ch.wellernet.restlet.util.CustomJacksonConverter;
 
 /**
  * Main spring configuration used to start HomeTV Master.

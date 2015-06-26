@@ -10,10 +10,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
+import ch.wellernet.hibernate.dao.AbstractJpaDaoImpl;
 import ch.wellernet.hometv.master.impl.dao.SettingDao;
 import ch.wellernet.hometv.master.impl.model.Setting;
 import ch.wellernet.hometv.master.impl.model.Setting_;
-import ch.wellernet.hometv.util.dao.AbstractJpaDaoImpl;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
@@ -38,7 +38,7 @@ public class SettingJpaDaoImpl extends AbstractJpaDaoImpl<Integer, Setting> impl
     }
 
     /**
-     * @see ch.wellernet.hometv.util.dao.AbstractJpaDaoImpl#getType()
+     * @see ch.wellernet.hibernate.dao.AbstractJpaDaoImpl#getType()
      */
     @Override
     protected Class<Setting> getType() {

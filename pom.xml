@@ -13,9 +13,9 @@
 	<modules>
 		<module>hometv-controller-app</module>
 		<module>hometv-master</module>
-		<module>hometv-util</module>
 		<module>hometv-test-util</module>
 		<module>hometv-renderer-app</module>
+		<module>hometv-renderer-api</module>
 	</modules>
 	<repositories>
 		<repository>
@@ -37,6 +37,21 @@
 				<version>2.4.4</version>
 			</dependency>
 			<dependency>
+				<groupId>ch.wellernet.hibernate</groupId>
+				<artifactId>hibernate-dao</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.hibernate</groupId>
+				<artifactId>hibernate-model</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.hometv</groupId>
+				<artifactId>hometv-renderer-api</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
 				<groupId>ch.wellernet.hometv.master</groupId>
 				<artifactId>hometv-master-api</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
@@ -48,11 +63,6 @@
 			</dependency>
 			<dependency>
 				<groupId>ch.wellernet.hometv</groupId>
-				<artifactId>hometv-util</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>ch.wellernet.hometv</groupId>
 				<artifactId>hometv-test-util</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
 				<scope>test</scope>
@@ -60,6 +70,21 @@
 			<dependency>
 				<groupId>ch.wellernet.mediainfolib</groupId>
 				<artifactId>mediainfolib</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.restlet</groupId>
+				<artifactId>restlet-android</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.restlet</groupId>
+				<artifactId>restlet-spring</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.wellernet.restlet</groupId>
+				<artifactId>restlet-util</artifactId>
 				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -239,6 +264,12 @@
 						<groupId>javax.xml.stream</groupId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.restlet.android</groupId>
+				<artifactId>org.restlet.ext.nio</artifactId>
+				<version>2.3.2</version>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.roboguice</groupId>

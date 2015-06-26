@@ -11,8 +11,12 @@
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
-			<groupId>ch.wellernet.hometv</groupId>
-			<artifactId>hometv-util</artifactId>
+			<groupId>ch.wellernet.hibernate</groupId>
+			<artifactId>hibernate-model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.restlet</groupId>
+			<artifactId>restlet-util</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

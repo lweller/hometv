@@ -14,10 +14,10 @@ import javax.persistence.OrderColumn;
 
 import org.joda.time.Duration;
 
-import ch.wellernet.hometv.util.model.Serializable;
+import ch.wellernet.restlet.util.JsonObject;
 
 @Embeddable
-public class PlayList implements Serializable {
+public class PlayList implements JsonObject {
 
     private static final long serialVersionUID = 1L;
 

@@ -10,8 +10,8 @@ import static org.mockito.Mockito.doAnswer;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import ch.wellernet.hometv.util.dao.GenericDao;
-import ch.wellernet.hometv.util.model.IdentifyableObject;
+import ch.wellernet.hibernate.dao.GenericDao;
+import ch.wellernet.hibernate.model.IdentifyableObject;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>

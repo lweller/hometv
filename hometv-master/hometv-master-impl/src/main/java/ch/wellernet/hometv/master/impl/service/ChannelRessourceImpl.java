@@ -18,7 +18,7 @@ import ch.wellernet.hometv.master.api.model.Channel;
 import ch.wellernet.hometv.master.api.model.ChannelRestartMode;
 import ch.wellernet.hometv.master.api.service.ChannelRessource;
 import ch.wellernet.hometv.master.impl.vlc.ChannelVlcManager;
-import ch.wellernet.hometv.util.restlet.Restlet;
+import ch.wellernet.restlet.spring.Restlet;
 
 @Restlet(router = "root", uriTemplate = "/channel/{id}")
 public class ChannelRessourceImpl extends ServerResource implements ChannelRessource {

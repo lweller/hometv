@@ -3,8 +3,8 @@
  */
 package ch.wellernet.hometv.master.impl.dao;
 
+import ch.wellernet.hibernate.dao.GenericDao;
 import ch.wellernet.hometv.master.impl.model.Setting;
-import ch.wellernet.hometv.util.dao.GenericDao;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>

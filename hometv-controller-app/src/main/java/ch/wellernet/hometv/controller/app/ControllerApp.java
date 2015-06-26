@@ -13,7 +13,7 @@ import ch.wellernet.hometv.controller.app.channels.ChannelController;
 import ch.wellernet.hometv.master.api.service.ChannelRessource;
 import ch.wellernet.hometv.master.api.service.ChannelsRessource;
 import ch.wellernet.hometv.master.api.service.PlayListItemsRessource;
-import ch.wellernet.hometv.util.restlet.ClientRessourceFactory;
+import ch.wellernet.restlet.util.ClientRessourceFactory;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;

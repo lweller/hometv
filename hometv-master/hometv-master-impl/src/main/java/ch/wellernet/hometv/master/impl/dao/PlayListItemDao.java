@@ -2,8 +2,8 @@ package ch.wellernet.hometv.master.impl.dao;
 
 import java.io.File;
 
+import ch.wellernet.hibernate.dao.GenericDao;
 import ch.wellernet.hometv.master.api.model.PlayListItem;
-import ch.wellernet.hometv.util.dao.GenericDao;
 
 public interface PlayListItemDao extends GenericDao<Integer, PlayListItem> {
 

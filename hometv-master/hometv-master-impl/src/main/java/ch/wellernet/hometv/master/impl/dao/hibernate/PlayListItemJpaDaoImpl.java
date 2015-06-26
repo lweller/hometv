@@ -12,10 +12,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
+import ch.wellernet.hibernate.dao.AbstractJpaDaoImpl;
 import ch.wellernet.hometv.master.api.model.PlayListItem;
 import ch.wellernet.hometv.master.api.model.PlayListItem_;
 import ch.wellernet.hometv.master.impl.dao.PlayListItemDao;
-import ch.wellernet.hometv.util.dao.AbstractJpaDaoImpl;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
@@ -40,7 +40,7 @@ public class PlayListItemJpaDaoImpl extends AbstractJpaDaoImpl<Integer, PlayList
     }
 
     /**
-     * @see ch.wellernet.hometv.util.dao.AbstractJpaDaoImpl#getType()
+     * @see ch.wellernet.hibernate.dao.AbstractJpaDaoImpl#getType()
      */
     @Override
     protected Class<PlayListItem> getType() {

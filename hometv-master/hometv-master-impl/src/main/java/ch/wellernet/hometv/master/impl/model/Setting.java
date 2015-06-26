@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import ch.wellernet.hometv.util.model.IdentifyableObject;
+import ch.wellernet.hibernate.model.IdentifyableObject;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>

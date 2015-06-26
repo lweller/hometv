@@ -20,9 +20,13 @@
 			<artifactId>hometv-test-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>ch.wellernet.hometv</groupId>
-			<artifactId>hometv-util</artifactId>
+			<groupId>ch.wellernet.restlet</groupId>
+			<artifactId>restlet-android</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>ch.wellernet.restlet</groupId>
+			<artifactId>restlet-util</artifactId>
+			</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
