@@ -6,6 +6,7 @@ package ch.wellernet.hometv.master.impl;
 import static ch.wellernet.restlet.spring.TransactionalHttpServerHelper.TRANSACTION_MANAGER;
 import static org.apache.commons.collections.MapUtils.putAll;
 import static org.restlet.data.Protocol.HTTP;
+import static org.springframework.context.annotation.FilterType.REGEX;
 
 import java.util.HashMap;
 
@@ -21,15 +22,11 @@ import org.restlet.routing.Router;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import ch.wellernet.hometv.master.impl.dao.hibernate.PersistenceConfiguration;
-import ch.wellernet.hometv.master.impl.media.MediaConfiguration;
-import ch.wellernet.hometv.master.impl.service.ServiceConfiguration;
-import ch.wellernet.hometv.master.impl.vlc.VlcConfiguration;
 import ch.wellernet.restlet.spring.SpringRestletEngine;
 import ch.wellernet.restlet.util.CustomJacksonConverter;
 
@@ -39,10 +36,9 @@ import ch.wellernet.restlet.util.CustomJacksonConverter;
  * @author Lucien Weller <lucien@wellernet.ch>
  */
 @Configuration
-@ComponentScan
+@ComponentScan(excludeFilters = @Filter(type = REGEX, pattern = ".*\\..*TestConfiguration"))
 @EnableConfigurationProperties
 @EnableTransactionManagement
-@Import({ MediaConfiguration.class, VlcConfiguration.class, PersistenceConfiguration.class, ServiceConfiguration.class })
 public class MainConfiguration {
     @Resource
     private ServerProperties serverProperties;

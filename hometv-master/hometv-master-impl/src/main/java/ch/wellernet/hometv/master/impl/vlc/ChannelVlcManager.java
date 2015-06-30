@@ -59,7 +59,26 @@ public class ChannelVlcManager {
     private PlayListItemDao playListItemDao;
 
     @Resource
+    private VlcProperties vlcProperties;
+
+    @Resource
     private VlcManager vlcManager;
+
+    /**
+     * Builds the URL where a channel streams it's content via VLC media player.
+     *
+     * @param channelId
+     *            the ID of channel
+     * @return the URL where channel streams it's content or <code>null</code> if channel does not exist
+     */
+    public String buildStreamUrl(int channelId) {
+        Channel channel = loadChannel(channelId);
+        if (channel == null) {
+            LOG.debug("Did nothing as channel does not exist");
+            return null;
+        }
+        return format("http://%s:%s/%s", "", vlcProperties.getStreamPort(), buildMediaName(channel));
+    }
 
     /**
      * Creates a new media for a channel on VLC media player and configures its output .
@@ -73,8 +92,8 @@ public class ChannelVlcManager {
         String mediaName = buildMediaName(channel);
         try {
             vlcManager.createMedia(new VlcMedia(mediaName, BROADCAST, true, new VlcOutput.Builder().module("gather").module("std")
-                    .property("access", "http").property("mux", "ps").property("dst", format(":8080/%s", mediaName)).build(), new VlcOption(
-                            "sout-keep")));
+                    .property("access", "http").property("mux", "ps").property("dst", format(":%s/%s", vlcProperties.getStreamPort(), mediaName))
+                    .build(), new VlcOption("sout-keep")));
         } catch (VlcConnectionException exception) {
             LOG.warn("Caught exception", exception);
             throw new ChannelVlcException("Cannot create new channel on Vlc media player.");

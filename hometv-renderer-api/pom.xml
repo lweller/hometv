@@ -9,6 +9,10 @@
   <artifactId>hometv-renderer-api</artifactId>
   <dependencies>
   		<dependency>
+  			<groupId>ch.wellernet.hometv.common</groupId>
+  			<artifactId>hometv-common-api</artifactId>
+  		</dependency>
+  		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>

@@ -1,24 +1,37 @@
 /**
  *
  */
-package ch.wellernet.hometv.renderer.api.model;
+package ch.wellernet.hometv.common.api.model;
 
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
  */
+@Embeddable
 public class RendererInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final String deviceId;
-    private final String name;
-    private final String hostname;
+    @Column(name = "DEVICE_ID", unique = true)
+    private String deviceId;
+
+    @Column(name = "NAME")
+    private String name;
+
+    @Column(name = "HOSTNAME")
+    private String hostname;
 
     public RendererInfo(String deviceId, String name, String hostname) {
         this.deviceId = deviceId;
         this.name = name;
         this.hostname = hostname;
+    }
+
+    @SuppressWarnings("unused")
+    private RendererInfo() {
     }
 
     @Override

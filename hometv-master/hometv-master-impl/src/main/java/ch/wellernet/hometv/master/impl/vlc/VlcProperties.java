@@ -25,6 +25,11 @@ public class VlcProperties {
     private int port = 4212;
 
     /**
+     * <code>vlc.stream_port</code> : port used by VLC media player to stream items, defaults to <code>8080</code>
+     */
+    private int streamPort = 8080;
+
+    /**
      * <code>vlc.password</code> : password used to connect to (and startup) VLC media player, defaults to <code>something</code>
      */
     private char[] password = "something".toCharArray();
@@ -53,6 +58,10 @@ public class VlcProperties {
 
     public int getPort() {
         return port;
+    }
+
+    public int getStreamPort() {
+        return streamPort;
     }
 
     public boolean isStartVlc() {

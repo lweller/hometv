@@ -1,0 +1,2 @@
+INSERT INTO HOMETV.RENDERER(ID, DEVICE_ID, NAME, HOSTNAME) VALUES(20, 'dev01', 'First Device', 'dev01.example.com');
+INSERT INTO HOMETV.RENDERER(ID, DEVICE_ID, NAME, HOSTNAME) VALUES(21, 'dev02', 'Second Device', 'dev02.example.com');

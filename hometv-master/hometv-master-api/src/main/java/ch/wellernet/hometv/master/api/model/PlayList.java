@@ -23,7 +23,7 @@ public class PlayList implements JsonObject {
 
     @ManyToMany(cascade = DETACH)
     @OrderColumn(name = "ORDER")
-    @JoinTable(schema = "HOMETV", name = "PLAY_LIST", joinColumns = @JoinColumn(name = "CHANNEL_ID"), inverseJoinColumns = @JoinColumn(name = "PLAY_LIST_ITEM_ID"))
+    @JoinTable(schema = "HOMETV", name = "PLAY_LIST", joinColumns = @JoinColumn(name = "ID_CHANNEL"), inverseJoinColumns = @JoinColumn(name = "ID_PLAY_LIST_ITEM"))
     private List<PlayListItem> items;
 
     public PlayList() {

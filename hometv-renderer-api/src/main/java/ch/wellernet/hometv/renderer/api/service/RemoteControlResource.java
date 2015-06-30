@@ -6,7 +6,7 @@ package ch.wellernet.hometv.renderer.api.service;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 
-import ch.wellernet.hometv.renderer.api.model.RendererInfo;
+import ch.wellernet.hometv.common.api.model.RendererInfo;
 
 /**
  * @author Lucien Weller <lucien@wellernet.ch>
@@ -20,4 +20,7 @@ public interface RemoteControlResource {
 
     @Post("?play")
     public void play(String url);
+
+    @Post("?stop")
+    public void stop();
 }

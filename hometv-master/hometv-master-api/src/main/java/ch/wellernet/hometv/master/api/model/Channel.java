@@ -49,7 +49,7 @@ public class Channel extends IdentifyableObject<Integer> implements JsonObject {
     private ChannelState state;
 
     @ManyToOne(cascade = DETACH)
-    @JoinColumn(name = "PLAY_LIST_ITEM_ID")
+    @JoinColumn(name = "ID_PLAY_LIST_ITEM")
     private PlayListItem currentPlayListItem;
 
     @Column(name = "CURRENT_POSITION")
