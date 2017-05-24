@@ -32,7 +32,8 @@ public class MediaItemManager {
 
     private static final Log LOG = LogFactory.getLog(MediaItemManager.class);
 
-    private static final String MEDIA_FILE_EXTENSION = ".avi";
+    private static final String MEDIA_FILE_EXTENSION_AVI = ".avi";
+    private static final String MEDIA_FILE_EXTENSION_M4V = ".m4v";
 
     @Resource
     private Mediainfo mediainfo;
@@ -69,7 +70,7 @@ public class MediaItemManager {
                     LOG.debug(format("Recursively scanning subdirectory %s", file));
                     stack.addAll(asList(file.listFiles()));
                 }
-            } else if (file.getName().endsWith(MEDIA_FILE_EXTENSION)) {
+            } else if (file.getName().endsWith(MEDIA_FILE_EXTENSION_AVI) || file.getName().endsWith(MEDIA_FILE_EXTENSION_M4V)) {
                 PlayListItem playListItem = playListItemDao.findByFile(file);
                 if (playListItem == null) {
                     createNewPlayListItem(file);
@@ -90,7 +91,7 @@ public class MediaItemManager {
      */
     String buildMediaItemTitle(File file) {
         String fileName = file.getName();
-        return fileName.substring(0, fileName.length() - MEDIA_FILE_EXTENSION.length());
+        return fileName.substring(0, fileName.length() - MEDIA_FILE_EXTENSION_AVI.length());
     }
 
     void createNewPlayListItem(File file) {

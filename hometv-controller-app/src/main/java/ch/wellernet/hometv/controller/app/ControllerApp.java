@@ -29,7 +29,7 @@ public class ControllerApp extends Application {
             Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
 
             Client client = new Client(HTTP);
-            ClientResource root = new ClientResource("http://10.0.2.2:8100/");
+            ClientResource root = new ClientResource("http://192.168.24.10:8100/");
             root.setNext(client);
             root.setEntityBuffering(true);
 

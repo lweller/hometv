@@ -16,7 +16,7 @@ import android.content.Intent;
 import android.net.Uri;
 import ch.wellernet.hometv.common.api.model.RendererInfo;
 import ch.wellernet.hometv.renderer.api.service.RemoteControlResource;
-import ch.wellernet.hometv.renderer.app.RendererInfoHelper;
+import ch.wellernet.hometv.renderer.app.controller.RendererController;
 
 import com.google.inject.Inject;
 
@@ -30,7 +30,7 @@ public class RemoteControlResourceImpl extends ServerResource implements RemoteC
     private Context context;
 
     @Inject
-    private RendererInfoHelper rendererInfoHelper;
+    private RendererController rendererInfoHelper;
 
     /**
      * @see ch.wellernet.hometv.renderer.api.service.RemoteControlResource#getInfos()

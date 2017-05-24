@@ -11,6 +11,7 @@ import org.restlet.ext.nio.HttpServerHelper;
 
 import android.app.Application;
 import ch.wellernet.hometv.renderer.api.service.RemoteControlResource;
+import ch.wellernet.hometv.renderer.app.controller.RendererController;
 import ch.wellernet.hometv.renderer.app.service.resources.RemoteControlResourceImpl;
 
 import com.google.inject.Binder;
@@ -26,6 +27,7 @@ public class RendererApp extends Application {
         public void configure(Binder binder) {
             Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
             Engine.getInstance().getRegisteredServers().add(new HttpServerHelper(null));
+            binder.bind(RendererController.class).toProvider(RendererController.Provider.class);
             binder.bind(RemoteControlResource.class).to(RemoteControlResourceImpl.class);
         }
     }

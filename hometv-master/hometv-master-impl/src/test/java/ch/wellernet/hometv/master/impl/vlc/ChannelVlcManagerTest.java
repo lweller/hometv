@@ -88,6 +88,9 @@ public class ChannelVlcManagerTest {
     private PlayListItemDao playListItemDao;
 
     @Mock
+    private VlcProperties vlcProperties;
+
+    @Mock
     private VlcManager vlcManager;
 
     private Channel channel;
@@ -650,7 +653,7 @@ public class ChannelVlcManagerTest {
 
     private PlayListItem createPlayListItem(int id) {
         PlayListItem playListItem = new PlayListItem.Builder(format("film%d", id), new File(format("/path/to/media/file%d.avi", id)), null)
-                .build(new PredefinedIdInitializer<PlayListItem>(id));
+        .build(new PredefinedIdInitializer<PlayListItem>(id));
         return playListItem;
     }
 }

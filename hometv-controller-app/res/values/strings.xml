@@ -19,5 +19,7 @@
 	<string name="askForRestartMode">Depuis où voulez-vous reprendre la lecture?</string>
 	<string name="unknown">inconnu</string>
 	<string name="duration">Durée: %1$d:%2$02d:%3$02d</string>
+	<string name="rendererTitle">Ecran</string>
+	<string name="notConnected">non  connecté</string>
 
 </resources>

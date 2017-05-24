@@ -16,6 +16,7 @@
 		<module>hometv-test-util</module>
 		<module>hometv-renderer-app</module>
 		<module>hometv-renderer-api</module>
+		<module>hometv-common-api</module>
 	</modules>
 	<repositories>
 		<repository>
